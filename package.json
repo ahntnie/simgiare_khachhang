@@ -1,0 +1,8 @@
+{
+  "dependencies": {
+    "2captcha": "^3.0.5-2",
+    "axios": "^1.7.9",
+    "chartjs-chart-financial": "^0.2.1",
+    "puppeteer": "^24.1.0"
+  }
+}

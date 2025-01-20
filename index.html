@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SIM GIÁ RẺ</title>
+  <style>
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 20px;
+      background-color: #f5f5f5;
+      color: #333;
+    }
+
+    h1 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 30px;
+    }
+
+    input[type="file"] {
+      display: block;
+      margin: 0 auto 20px;
+      padding: 10px;
+      font-size: 16px;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    input[type="file"]:hover {
+      background-color: #45a049;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 20px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+      background-color: rgb(233, 233, 132);
+    }
+
+    th,
+    td {
+      border: 1px solid black;
+      padding: 12px;
+      text-align: center;
+      font-size: 14px;
+      transition: background-color 0.3s ease;
+    }
+
+    th {
+      background-color: #FF6347;
+      color: white;
+      font-weight: bold;
+    }
+
+    td {
+      background-color: rgb(233, 233, 132);
+    }
+
+    .moc {
+      background-color: #228B22;
+      color: white;
+      font-weight: bold;
+    }
+
+    .hoa {
+      background-color: red;
+      color: white;
+      font-weight: bold;
+    }
+
+    .thuy {
+      background-color: #1E90FF;
+      color: white;
+      font-weight: bold;
+    }
+
+    .tho {
+      background-color: #A9A9A9;
+      color: white;
+      font-weight: bold;
+    }
+
+    .kim {
+      background-color: #FFD700;
+      color: black;
+      font-weight: bold;
+    }
+
+    .gia {
+      color: #FF0000;
+      font-weight: bold;
+    }
+
+    .sim {
+      color: #000000;
+      font-weight: bold;
+    }
+
+    /* Thanh tìm kiếm và bộ lọc */
+    .filter-container {
+      display: flex;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .filter-container input,
+    .filter-container select {
+      padding: 10px;
+      margin: 0 10px;
+      font-size: 16px;
+      border-radius: 5px;
+      border: 1px solid #ccc;
+    }
+
+    /* Nút Start/Stop Auto Scroll */
+    .scroll-button {
+      position: fixed;
+      top: 10px;
+      right: 10px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+    }
+
+    .scroll-button:hover {
+      background-color: #45a049;
+    }
+  </style>
+</head>
+
+<body>
+  <h1>CHỌN FILE EXCEL ĐỂ EXPORT SIM</h1>
+  <input type="file" id="excelFile" accept=".xlsx, .xls" />
+
+  <!-- Bộ lọc và tìm kiếm -->
+  <div class="filter-container">
+    <input type="text" id="searchInput" placeholder="Tìm kiếm STT..." onkeyup="debouncedFilter()" />
+    <select id="mangFilter" onchange="debouncedFilter()">
+      <option value="">Chọn Mệnh</option>
+      <option value="mộc">Mộc</option>
+      <option value="hỏa">Hỏa</option>
+      <option value="thủy">Thủy</option>
+      <option value="thổ">Thổ</option>
+      <option value="kim">Kim</option>
+    </select>
+    <input type="text" id="middleFilter" placeholder="Tìm kiếm 4 số giữa SIM..." onkeyup="debouncedFilter()" />
+    <input type="text" id="startFilter" placeholder="Đầu số" onkeyup="debouncedFilter()" />
+    <input type="text" id="endFilter" placeholder="Cuối số" onkeyup="debouncedFilter()" />
+  </div>
+
+  <!-- Bảng dữ liệu -->
+  <table id="dataTable">
+    <thead></thead>
+    <tbody></tbody>
+  </table>
+
+  <!-- Nút Start/Stop Auto Scroll -->
+  <button id="scrollButton" class="scroll-button" onclick="toggleAutoScroll()">Bật Cuộn Tự Động</button>
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+
+  <script>
+    let autoScrollInterval;
+    let autoScrollActive = false;
+    let timeoutId;
+
+    // Bật/Tắt cuộn tự động
+    function toggleAutoScroll() {
+      if (autoScrollActive) {
+        clearInterval(autoScrollInterval);
+        document.getElementById('scrollButton').textContent = 'Bật Cuộn Tự Động';
+      } else {
+        startAutoScroll();
+        document.getElementById('scrollButton').textContent = 'Dừng Cuộn Tự Động';
+      }
+      autoScrollActive = !autoScrollActive;
+    }
+
+    function startAutoScroll() {
+      autoScrollInterval = setInterval(() => {
+        window.scrollBy(0, 2);
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+          window.scrollTo(0, 0);
+        }
+      }, 60);
+    }
+
+    let currentPage = 0;
+    const pageSize = 100;
+
+    document.getElementById('excelFile').addEventListener('change', function (event) {
+      const file = event.target.files[0];
+      if (!file) {
+        alert("Please select a file!");
+        return;
+      }
+
+      const reader = new FileReader();
+      reader.onload = function (e) {
+        const data = new Uint8Array(e.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+
+        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+        const filteredData = jsonData.slice(1000);
+        localStorage.setItem('excelData', JSON.stringify(filteredData));
+
+        displayTable(filteredData);
+      };
+
+      reader.readAsArrayBuffer(file);
+    });
+
+    function displayTable(data) {
+      const tableHead = document.querySelector('#dataTable thead');
+      const tableBody = document.querySelector('#dataTable tbody');
+
+      if (data.length === 0) {
+        alert("No data found in the file.");
+        return;
+      }
+
+
+      if (tableHead.innerHTML === '') {
+        const headers = ['STT', 'SIM', 'MỆNH', 'GIÁ'];
+        const headerRow = document.createElement('tr');
+        headers.forEach(header => {
+          const th = document.createElement('th');
+          th.textContent = header;
+          headerRow.appendChild(th);
+        });
+        tableHead.appendChild(headerRow);
+      }
+
+      data.forEach(row => {
+        const tr = document.createElement('tr');
+        const rowData = row.slice(0, 5);
+        rowData.forEach((cell, index) => {
+          const td = document.createElement('td');
+          td.textContent = cell || '';
+
+          if (index === 2) {
+            const normalizedValue = (cell || '').trim().toLowerCase();
+            switch (normalizedValue) {
+              case 'mộc':
+                td.classList.add('moc');
+                break;
+              case 'hỏa':
+                td.classList.add('hoa');
+                break;
+              case 'thủy':
+                td.classList.add('thuy');
+                break;
+              case 'thổ':
+                td.classList.add('tho');
+                break;
+              case 'kim':
+                td.classList.add('kim');
+                break;
+              default:
+                td.style.backgroundColor = '#fff';
+            }
+          }
+
+          if (index === 3) {
+            td.classList.add('gia');
+          }
+
+          if (index === 1) {
+            td.classList.add('sim');
+          }
+
+          tr.appendChild(td);
+        });
+
+        tableBody.appendChild(tr);
+      });
+
+    }
+
+    // Khi cuộn đến cuối, tải thêm 100 bản ghi
+    window.onscroll = function () {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        loadMoreData();
+      }
+    };
+
+    // Tải thêm 100 bản ghi
+    function loadMoreData() {
+      const storedData = localStorage.getItem('excelData');
+      if (storedData) {
+        const data = JSON.parse(storedData);
+
+        const nextData = data.slice((currentPage + 1) * pageSize, (currentPage + 2) * pageSize);
+        if (nextData.length > 0) {
+          currentPage++;
+          displayTable(nextData);
+        }
+      }
+    }
+
+    // Lọc dữ liệu sau khi tải
+    function debouncedFilter() {
+      clearTimeout(timeoutId);
+      timeoutId = setTimeout(filterTable, 200);
+    }
+
+    function filterTable() {
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
+      const startFilter = document.getElementById('startFilter').value.toLowerCase();
+      const endFilter = document.getElementById('endFilter').value.toLowerCase();
+      const middleFilter = document.getElementById('middleFilter').value.toLowerCase();
+      const rows = document.querySelectorAll('#dataTable tbody tr');
+
+      rows.forEach(row => {
+        const cells = row.getElementsByTagName('td');
+        const sim = cells[1].textContent.toLowerCase().replace(/\./g, ''); // Loại bỏ dấu chấm
+        const mệnh = cells[2].textContent.toLowerCase();
+        const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
+        const matchSim = sim.includes(searchInput);
+        const matchMệnh = mệnh.includes(mệnhFilter);
+        const matchStart = startFilter === '' || sim.startsWith(startFilter);
+        const matchEnd = endFilter === '' || sim.endsWith(endFilter);
+        const matchMiddle4Digits = middle4Digits.includes(middleFilter);
+        if (matchSim && matchMệnh && matchStart && matchEnd && matchMiddle4Digits) {
+          row.style.display = '';
+        } else {
+          row.style.display = 'none';
+        }
+      });
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      const storedData = localStorage.getItem('excelData');
+      if (storedData) {
+        const data = JSON.parse(storedData);
+        displayTable(data.slice(0, pageSize));  // Hiển thị 100 bản ghi đầu tiên
+      }
+    });
+
+  </script>
+</body>
+
+</html>
