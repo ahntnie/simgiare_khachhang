@@ -16,14 +16,16 @@
     h1 {
       text-align: center;
       color: #333;
-      margin-bottom: 30px;
+      margin-bottom: 20px;
+      font-size: 2rem;
+      /* Kích thước linh hoạt */
     }
 
     input[type="file"] {
       display: block;
       margin: 0 auto 20px;
       padding: 10px;
-      font-size: 16px;
+      font-size: 1rem;
       background-color: #4CAF50;
       color: white;
       border: none;
@@ -40,7 +42,6 @@
       border-collapse: collapse;
       margin-top: 20px;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-      background-color: rgb(233, 233, 132);
     }
 
     th,
@@ -48,20 +49,20 @@
       border: 1px solid black;
       padding: 12px;
       text-align: center;
-      font-size: 14px;
+      font-size: 1rem;
       transition: background-color 0.3s ease;
     }
 
     th {
       background-color: #FF6347;
       color: white;
-      font-weight: bold;
     }
 
     td {
       background-color: rgb(233, 233, 132);
     }
 
+    /* Giữ màu sắc nguyên vẹn */
     .moc {
       background-color: #228B22;
       color: white;
@@ -105,35 +106,94 @@
     /* Thanh tìm kiếm và bộ lọc */
     .filter-container {
       display: flex;
+      flex-wrap: wrap;
       justify-content: center;
+      gap: 10px;
       margin-bottom: 20px;
     }
 
     .filter-container input,
     .filter-container select {
       padding: 10px;
-      margin: 0 10px;
-      font-size: 16px;
+      font-size: 1rem;
       border-radius: 5px;
       border: 1px solid #ccc;
+      flex: 1 1 150px;
+      /* Linh hoạt kích thước */
     }
 
-    /* Nút Start/Stop Auto Scroll */
     .scroll-button {
       position: fixed;
-      top: 10px;
+      top: 30px;
       right: 10px;
       padding: 10px 20px;
       background-color: #4CAF50;
       color: white;
-      font-size: 16px;
+      font-size: 1rem;
       border: none;
-      border-radius: 5px;
+      border-radius: 50px;
       cursor: pointer;
     }
 
     .scroll-button:hover {
       background-color: #45a049;
+    }
+
+    /* Responsive Design */
+    @media (max-width: 768px) {
+      body {
+        margin: 10px;
+      }
+
+      h1 {
+        font-size: 1.5rem;
+      }
+
+      input[type="file"] {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+
+      th,
+      td {
+        font-size: 0.9rem;
+        padding: 8px;
+      }
+
+      .filter-container input,
+      .filter-container select {
+        font-size: 0.9rem;
+        padding: 8px;
+        flex: 1 1 100px;
+      }
+
+      .scroll-button {
+        font-size: 0.9rem;
+        padding: 8px 15px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      h1 {
+        font-size: 1.2rem;
+      }
+
+      .filter-container input,
+      .filter-container select {
+        font-size: 0.8rem;
+        padding: 6px;
+      }
+
+      th,
+      td {
+        font-size: 0.8rem;
+        padding: 6px;
+      }
+
+      .scroll-button {
+        font-size: 0.8rem;
+        padding: 6px 10px;
+      }
     }
   </style>
 </head>
@@ -158,13 +218,11 @@
     <input type="text" id="endFilter" placeholder="Cuối số" onkeyup="debouncedFilter()" />
   </div>
 
-  <!-- Bảng dữ liệu -->
   <table id="dataTable">
     <thead></thead>
     <tbody></tbody>
   </table>
 
-  <!-- Nút Start/Stop Auto Scroll -->
   <button id="scrollButton" class="scroll-button" onclick="toggleAutoScroll()">Bật Cuộn Tự Động</button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -173,8 +231,8 @@
     let autoScrollInterval;
     let autoScrollActive = false;
     let timeoutId;
+    let isFiltering = false; // Cờ kiểm soát chế độ tìm kiếm
 
-    // Bật/Tắt cuộn tự động
     function toggleAutoScroll() {
       if (autoScrollActive) {
         clearInterval(autoScrollInterval);
@@ -192,7 +250,7 @@
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
           window.scrollTo(0, 0);
         }
-      }, 60);
+      }, 30);
     }
 
     let currentPage = 0;
@@ -228,11 +286,12 @@
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
 
+      tableBody.innerHTML = ''; // Xóa nội dung cũ
+
       if (data.length === 0) {
         alert("No data found in the file.");
         return;
       }
-
 
       if (tableHead.innerHTML === '') {
         const headers = ['STT', 'SIM', 'MỆNH', 'GIÁ'];
@@ -245,14 +304,19 @@
         tableHead.appendChild(headerRow);
       }
 
-      data.forEach(row => {
+      data.forEach((row, index) => {
         const tr = document.createElement('tr');
-        const rowData = row.slice(0, 5);
-        rowData.forEach((cell, index) => {
+        const rowData = row.slice(1, 5);
+
+        const sttCell = document.createElement('td');
+        sttCell.textContent = index + 1;
+        tr.appendChild(sttCell);
+
+        rowData.forEach((cell, cellIndex) => {
           const td = document.createElement('td');
           td.textContent = cell || '';
 
-          if (index === 2) {
+          if (cellIndex === 1) {
             const normalizedValue = (cell || '').trim().toLowerCase();
             switch (normalizedValue) {
               case 'mộc':
@@ -270,35 +334,25 @@
               case 'kim':
                 td.classList.add('kim');
                 break;
-              default:
-                td.style.backgroundColor = '#fff';
             }
           }
 
-          if (index === 3) {
-            td.classList.add('gia');
-          }
-
-          if (index === 1) {
-            td.classList.add('sim');
-          }
+          if (cellIndex === 2) td.classList.add('gia');
+          if (cellIndex === 0) td.classList.add('sim');
 
           tr.appendChild(td);
         });
 
         tableBody.appendChild(tr);
       });
-
     }
 
-    // Khi cuộn đến cuối, tải thêm 100 bản ghi
     window.onscroll = function () {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+      if (!isFiltering && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         loadMoreData();
       }
     };
 
-    // Tải thêm 100 bản ghi
     function loadMoreData() {
       const storedData = localStorage.getItem('excelData');
       if (storedData) {
@@ -312,13 +366,14 @@
       }
     }
 
-    // Lọc dữ liệu sau khi tải
     function debouncedFilter() {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(filterTable, 200);
     }
 
     function filterTable() {
+      isFiltering = true; // Kích hoạt chế độ tìm kiếm
+
       const searchInput = document.getElementById('searchInput').value.toLowerCase();
       const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
       const startFilter = document.getElementById('startFilter').value.toLowerCase();
@@ -326,9 +381,10 @@
       const middleFilter = document.getElementById('middleFilter').value.toLowerCase();
       const rows = document.querySelectorAll('#dataTable tbody tr');
 
+      let visibleIndex = 0;
       rows.forEach(row => {
         const cells = row.getElementsByTagName('td');
-        const sim = cells[1].textContent.toLowerCase().replace(/\./g, ''); // Loại bỏ dấu chấm
+        const sim = cells[1].textContent.toLowerCase().replace(/\./g, '');
         const mệnh = cells[2].textContent.toLowerCase();
         const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
         const matchSim = sim.includes(searchInput);
@@ -336,19 +392,23 @@
         const matchStart = startFilter === '' || sim.startsWith(startFilter);
         const matchEnd = endFilter === '' || sim.endsWith(endFilter);
         const matchMiddle4Digits = middle4Digits.includes(middleFilter);
+
         if (matchSim && matchMệnh && matchStart && matchEnd && matchMiddle4Digits) {
           row.style.display = '';
+          cells[0].textContent = ++visibleIndex;
         } else {
           row.style.display = 'none';
         }
       });
     }
 
+
+
     document.addEventListener('DOMContentLoaded', function () {
       const storedData = localStorage.getItem('excelData');
       if (storedData) {
         const data = JSON.parse(storedData);
-        displayTable(data.slice(0, pageSize));  // Hiển thị 100 bản ghi đầu tiên
+        displayTable(data.slice(0, pageSize));
       }
     });
 
