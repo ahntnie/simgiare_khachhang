@@ -500,7 +500,6 @@
       const tableBody = document.querySelector('#dataTable tbody');
 
       if (row.classList.contains('pinned')) {
-        // Bỏ ghim: đưa hàng về vị trí ban đầu
         row.classList.remove('pinned');
         pinButton.textContent = 'Ghim';
         pinButton.style.backgroundColor = '#4CAF50';
@@ -588,7 +587,7 @@
 
       rows.forEach(row => {
         const cells = row.getElementsByTagName('td');
-        const mệnh = cells[2]?.textContent.toLowerCase();
+        const mệnh = cells[3]?.textContent.toLowerCase();
 
         if (mệnhFilter === "" || mệnh.includes(mệnhFilter)) {
           row.style.display = '';
