@@ -55,7 +55,7 @@
 
     th,
     td {
-      border: 1px solid black;
+      border: 1px solid red;
       padding: 12px;
       text-align: center;
       font-size: 1rem;
@@ -63,43 +63,65 @@
     }
 
     th {
-      background-color: #FF6347;
+      background-color: red;
       color: white;
+      position: sticky;
+      top: 0;
+      z-index: 1;
     }
 
     td {
       background-color: rgb(233, 233, 132);
     }
 
-    /* Giữ màu sắc nguyên vẹn */
     .moc {
-      background-color: #228B22;
+      background-color: #00b050;
       color: white;
       font-weight: bold;
+      border-radius: 30px;
+      padding: 2px 10px;
+      text-align: center;
+      border: 1px solid #006400;
     }
 
     .hoa {
-      background-color: red;
+      background-color: #ff0000;
       color: white;
       font-weight: bold;
+      border-radius: 30px;
+      padding: 2px 10px;
+      text-align: center;
+      border: 1px solid #800000;
     }
 
     .thuy {
-      background-color: #1E90FF;
+      background-color: #00b0f0;
       color: white;
       font-weight: bold;
+      border-radius: 30px;
+      padding: 2px 10px;
+      text-align: center;
+      border: 1px solid #005f99;
     }
 
     .tho {
-      background-color: #A9A9A9;
+      background-color: #ffc000;
       color: white;
       font-weight: bold;
+      border-radius: 30px;
+      padding: 2px 10px;
+      text-align: center;
+      border: 1px solid #b38600;
     }
 
     .kim {
-      background-color: #FFD700;
-      color: black;
+      background-color: #808080;
+      color: white;
       font-weight: bold;
+      border-radius: 30px;
+      padding: 2px 10px;
+      text-align: center;
+      border: 1px solid #4d4d4d;
     }
 
     .gia {
@@ -112,13 +134,17 @@
       font-weight: bold;
     }
 
-    /* Thanh tìm kiếm và bộ lọc */
     .filter-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
       gap: 10px;
       margin-bottom: 20px;
+      padding: 10px;
+      background-color: #f5f5f5;
+      position: sticky;
+      top: 0;
+      z-index: 1000;
     }
 
     .filter-container input,
@@ -128,27 +154,10 @@
       border-radius: 5px;
       border: 1px solid #ccc;
       flex: 1 1 150px;
-      /* Linh hoạt kích thước */
     }
 
-    .scroll-button {
-      position: fixed;
-      top: 30px;
-      right: 10px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      font-size: 1rem;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-    }
 
-    .scroll-button:hover {
-      background-color: #45a049;
-    }
 
-    /* Responsive Design */
     @media (max-width: 768px) {
       body {
         margin: 10px;
@@ -252,28 +261,33 @@
     let autoScrollInterval;
     let autoScrollActive = false;
     let timeoutId;
-    let isFiltering = false; // Cờ kiểm soát chế độ tìm kiếm
-
+    let isFiltering = false;
     function toggleAutoScroll() {
       if (autoScrollActive) {
         clearInterval(autoScrollInterval);
-        document.getElementById('scrollButton').textContent = 'Bật Cuộn Tự Động';
+        autoScrollActive = false;
       } else {
         startAutoScroll();
-        document.getElementById('scrollButton').textContent = 'Dừng Cuộn Tự Động';
+        autoScrollActive = true;
       }
-      autoScrollActive = !autoScrollActive;
     }
 
     function startAutoScroll() {
-      autoScrollInterval = setInterval(() => {
-        window.scrollBy(0, 2);
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          window.scrollTo(0, 0);
-        }
-      }, 30);
-    }
+      const scrollStep = 1;
+      const scrollInterval = 50;
 
+      autoScrollInterval = setInterval(() => {
+        window.scrollBy(0, scrollStep);
+        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+          loadMoreData();
+        }
+      }, scrollInterval);
+    }
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'ArrowUp') {
+        toggleAutoScroll();
+      }
+    });
     let currentPage = 0;
     const pageSize = 100;
 
@@ -303,11 +317,13 @@
       reader.readAsArrayBuffer(file);
     });
 
-    function displayTable(data) {
+    function displayTable(data, append = false) {
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
 
-      tableBody.innerHTML = ''; // Xóa nội dung cũ
+      if (!append) {
+        tableBody.innerHTML = '';
+      }
 
       if (data.length === 0) {
         alert("No data found in the file.");
@@ -330,7 +346,7 @@
         const rowData = row.slice(1, 5);
 
         const sttCell = document.createElement('td');
-        sttCell.textContent = index + 1;
+        sttCell.textContent = index + 1 + currentPage * pageSize;
         tr.appendChild(sttCell);
 
         rowData.forEach((cell, cellIndex) => {
@@ -368,6 +384,7 @@
       });
     }
 
+
     window.onscroll = function () {
       if (!isFiltering && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
         loadMoreData();
@@ -399,35 +416,21 @@
     }
 
     function filterTable() {
-      isFiltering = true; // Kích hoạt chế độ tìm kiếm
-
-      const searchInput = document.getElementById('searchInput').value.toLowerCase();
       const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
-      const startFilter = document.getElementById('startFilter').value.toLowerCase();
-      const endFilter = document.getElementById('endFilter').value.toLowerCase();
-      const middleFilter = document.getElementById('middleFilter').value.toLowerCase();
       const rows = document.querySelectorAll('#dataTable tbody tr');
 
-      let visibleIndex = 0;
       rows.forEach(row => {
         const cells = row.getElementsByTagName('td');
-        const sim = cells[1].textContent.toLowerCase().replace(/\./g, '');
-        const mệnh = cells[2].textContent.toLowerCase();
-        const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
-        const matchSim = sim.includes(searchInput);
-        const matchMệnh = mệnh.includes(mệnhFilter);
-        const matchStart = startFilter === '' || sim.startsWith(startFilter);
-        const matchEnd = endFilter === '' || sim.endsWith(endFilter);
-        const matchMiddle4Digits = middle4Digits.includes(middleFilter);
+        const mệnh = cells[2]?.textContent.toLowerCase();
 
-        if (matchSim && matchMệnh && matchStart && matchEnd && matchMiddle4Digits) {
+        if (mệnhFilter === "" || mệnh.includes(mệnhFilter)) {
           row.style.display = '';
-          cells[0].textContent = ++visibleIndex;
         } else {
           row.style.display = 'none';
         }
       });
     }
+
 
 
 
