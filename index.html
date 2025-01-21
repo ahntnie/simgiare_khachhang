@@ -18,7 +18,6 @@
       color: #333;
       margin-bottom: 20px;
       font-size: 2rem;
-      /* Kích thước linh hoạt */
     }
 
     input[type="file"] {
@@ -38,22 +37,34 @@
     }
 
     table {
-      width: 100%;
+      border-spacing: 15px 0;
+      width: 35%;
       border-collapse: collapse;
-      margin-top: 20px;
+      margin: 20px auto;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       background-color: rgb(233, 233, 132);
+      text-align: center;
     }
 
-    td:nth-child(3),
-    th:nth-child(3) {
+    td:nth-child(1),
+    th:nth-child(1) {
       width: 80px;
       padding: 2px 5px;
       word-wrap: break-word;
       text-align: center;
     }
 
-    th,
+    td:nth-child(5),
+    th:nth-child(5),
+    td:nth-child(6),
+    th:nth-child(6) {
+      width: 80px;
+      padding: 2px 5px;
+      word-wrap: break-word;
+      text-align: center;
+    }
+
+
     td {
       border: 1px solid red;
       padding: 12px;
@@ -62,12 +73,21 @@
       transition: background-color 0.3s ease;
     }
 
+
     th {
       background-color: red;
+      border: 1px solid black;
       color: white;
+      padding: 12px;
       position: sticky;
       top: 0;
       z-index: 1;
+      transition: background-color 0.3s ease;
+
+    }
+
+    thead th {
+      z-index: 999;
     }
 
     td {
@@ -81,7 +101,6 @@
       border-radius: 30px;
       padding: 2px 10px;
       text-align: center;
-      border: 1px solid #006400;
     }
 
     .hoa {
@@ -91,7 +110,6 @@
       border-radius: 30px;
       padding: 2px 10px;
       text-align: center;
-      border: 1px solid #800000;
     }
 
     .thuy {
@@ -101,27 +119,24 @@
       border-radius: 30px;
       padding: 2px 10px;
       text-align: center;
-      border: 1px solid #005f99;
     }
 
     .tho {
-      background-color: #ffc000;
-      color: white;
-      font-weight: bold;
-      border-radius: 30px;
-      padding: 2px 10px;
-      text-align: center;
-      border: 1px solid #b38600;
-    }
-
-    .kim {
       background-color: #808080;
       color: white;
       font-weight: bold;
       border-radius: 30px;
       padding: 2px 10px;
       text-align: center;
-      border: 1px solid #4d4d4d;
+    }
+
+    .kim {
+      background-color: #ffc000;
+      color: white;
+      font-weight: bold;
+      border-radius: 30px;
+      padding: 2px 10px;
+      text-align: center;
     }
 
     .gia {
@@ -140,11 +155,48 @@
       justify-content: center;
       gap: 10px;
       margin-bottom: 20px;
-      padding: 10px;
+      padding: 5px;
       background-color: #f5f5f5;
       position: sticky;
       top: 0;
       z-index: 1000;
+    }
+
+    tr.pinned {
+      background-color: #d1ecf1;
+      border: 2px solid #0c5460;
+      border-left: none;
+      border-right: none;
+    }
+
+    tr.pinned td.moc {
+      background-color: #00b050 !important;
+    }
+
+    tr.pinned td.hoa {
+      background-color: #ff0000 !important;
+    }
+
+    tr.pinned td.thuy {
+      background-color: #00b0f0 !important;
+    }
+
+    tr.pinned td.tho {
+      background-color: #808080 !important;
+    }
+
+    tr.pinned td.kim {
+      background-color: #ffc000 !important;
+    }
+
+    tr.pinned:hover {
+      background-color: #c3e0e8;
+    }
+
+    thead#pinnedRows {
+      position: sticky;
+      top: 49px;
+      z-index: 3;
     }
 
     .filter-container input,
@@ -154,6 +206,25 @@
       border-radius: 5px;
       border: 1px solid #ccc;
       flex: 1 1 150px;
+    }
+
+    button {
+      padding: 5px 10px;
+      font-size: 0.9rem;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: all 0.3s ease;
+    }
+
+    button:hover {
+      opacity: 0.8;
+    }
+
+    button[style*="background-color: #FFA500"] {
+      background-color: #007bff;
+
+      color: white;
     }
 
 
@@ -233,6 +304,7 @@
 <body>
   <h1>CHỌN FILE EXCEL ĐỂ EXPORT SIM</h1>
   <input type="file" id="excelFile" accept=".xlsx, .xls" />
+  <button id="exportExcel" style="margin-top: 20px; padding: 10px; cursor: pointer;">Xuất File Excel</button>
 
   <div class="filter-container">
     <!-- <input type="text" id="searchInput" placeholder="Tìm kiếm STT..." onkeyup="debouncedFilter()" /> -->
@@ -250,6 +322,7 @@
   </div>
 
   <table id="dataTable">
+    <thead id="pinnedRows"></thead>
     <thead></thead>
     <tbody></tbody>
   </table>
@@ -288,8 +361,20 @@
         toggleAutoScroll();
       }
     });
-    let currentPage = 0;
-    const pageSize = 100;
+
+    document.getElementById('exportExcel').addEventListener('click', () => {
+      const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
+      const deletedData = JSON.parse(localStorage.getItem('deletedData')) || [];
+
+      const mainSheet = XLSX.utils.aoa_to_sheet([['STT', 'SIM', 'MỆNH', 'GIÁ'], ...storedData]);
+      const deletedSheet = XLSX.utils.aoa_to_sheet([['STT', 'SIM', 'MỆNH', 'GIÁ'], ...deletedData]);
+
+      const workbook = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(workbook, mainSheet, 'Dữ liệu chính');
+      XLSX.utils.book_append_sheet(workbook, deletedSheet, 'Những dòng đã xóa');
+
+      XLSX.writeFile(workbook, 'Updated_Data.xlsx');
+    });
 
     document.getElementById('excelFile').addEventListener('change', function (event) {
       const file = event.target.files[0];
@@ -317,7 +402,9 @@
       reader.readAsArrayBuffer(file);
     });
 
-    function displayTable(data) {
+    let currentPage = 0;
+    const pageSize = 100;
+    function displayTable(data, append = false) {
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
 
@@ -326,9 +413,8 @@
         return;
       }
 
-
       if (tableHead.innerHTML === '') {
-        const headers = ['STT', 'SIM', 'MỆNH', 'GIÁ'];
+        const headers = ['GHIM', 'STT', 'SIM', 'MỆNH', 'GIÁ', 'XÓA'];
         const headerRow = document.createElement('tr');
         headers.forEach(header => {
           const th = document.createElement('th');
@@ -338,54 +424,131 @@
         tableHead.appendChild(headerRow);
       }
 
-      data.forEach(row => {
+      if (!append) tableBody.innerHTML = '';
+
+      const startIndex = currentPage * pageSize;
+      const endIndex = startIndex + pageSize;
+      const pageData = data.slice(startIndex, endIndex);
+      const fragment = document.createDocumentFragment();
+
+      pageData.forEach((row, index) => {
         const tr = document.createElement('tr');
-        tr.onclick = function () {
-          highlightRow(this);
-        };
-        const rowData = row.slice(0, 5);
-        rowData.forEach((cell, index) => {
+        tr.dataset.index = startIndex + index;
+        const pinCell = document.createElement('td');
+        const pinButton = document.createElement('button');
+        pinButton.textContent = 'Ghim';
+        pinButton.style.backgroundColor = '#4CAF50';
+        pinButton.style.color = 'white';
+        pinButton.style.border = 'none';
+        pinButton.style.borderRadius = '5px';
+        pinButton.style.cursor = 'pointer';
+        pinButton.addEventListener('click', () => togglePin(tr));
+        pinCell.appendChild(pinButton);
+        tr.appendChild(pinCell);
+
+        row.slice(0, 4).forEach((cell, colIndex) => {
           const td = document.createElement('td');
           td.textContent = cell || '';
 
-          if (index === 2) {
+          if (colIndex === 2) {
             const normalizedValue = (cell || '').trim().toLowerCase();
             switch (normalizedValue) {
-              case 'mộc':
-                td.classList.add('moc');
-                break;
-              case 'hỏa':
-                td.classList.add('hoa');
-                break;
-              case 'thủy':
-                td.classList.add('thuy');
-                break;
-              case 'thổ':
-                td.classList.add('tho');
-                break;
-              case 'kim':
-                td.classList.add('kim');
-                break;
-              default:
-                td.style.backgroundColor = '#fff';
+              case 'mộc': td.classList.add('moc'); break;
+              case 'hỏa': td.classList.add('hoa'); break;
+              case 'thủy': td.classList.add('thuy'); break;
+              case 'thổ': td.classList.add('tho'); break;
+              case 'kim': td.classList.add('kim'); break;
             }
           }
 
-          if (index === 3) {
-            td.classList.add('gia');
-          }
-
-          if (index === 1) {
-            td.classList.add('sim');
-          }
+          if (colIndex === 3) td.classList.add('gia');
+          if (colIndex === 1) td.classList.add('sim');
 
           tr.appendChild(td);
         });
 
-        tableBody.appendChild(tr);
+        const deleteCell = document.createElement('td');
+        const deleteButton = document.createElement('button');
+        deleteButton.textContent = 'Xóa';
+        deleteButton.style.backgroundColor = 'red';
+        deleteButton.style.color = 'white';
+        deleteButton.style.border = 'none';
+        deleteButton.style.borderRadius = '5px';
+        deleteButton.style.cursor = 'pointer';
+        deleteButton.addEventListener('click', () => deleteRow(startIndex + index));
+        deleteCell.appendChild(deleteButton);
+        tr.appendChild(deleteCell);
+
+        fragment.appendChild(tr);
       });
 
+      tableBody.appendChild(fragment);
     }
+
+    function loadMoreData() {
+      const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
+      if ((currentPage + 1) * pageSize < storedData.length) {
+        currentPage++;
+        displayTable(storedData, true);
+      }
+    }
+
+
+    function togglePin(row) {
+      const pinButton = row.querySelector('td button');
+      const pinnedContainer = document.querySelector('#pinnedRows');
+      const tableBody = document.querySelector('#dataTable tbody');
+
+      if (row.classList.contains('pinned')) {
+        // Bỏ ghim: đưa hàng về vị trí ban đầu
+        row.classList.remove('pinned');
+        pinButton.textContent = 'Ghim';
+        pinButton.style.backgroundColor = '#4CAF50';
+
+        const originalIndex = parseInt(row.getAttribute('data-index'), 10);
+        const rows = Array.from(tableBody.querySelectorAll('tr'));
+
+        // Tìm vị trí ban đầu và chèn lại
+        let inserted = false;
+        for (let i = 0; i < rows.length; i++) {
+          if (parseInt(rows[i].getAttribute('data-index'), 10) > originalIndex) {
+            tableBody.insertBefore(row, rows[i]);
+            inserted = true;
+            break;
+          }
+        }
+
+        if (!inserted) {
+          tableBody.appendChild(row);
+        }
+      } else {
+        // Ghim: đưa hàng lên khu vực ghim
+        row.classList.add('pinned');
+        pinButton.textContent = 'Bỏ Ghim';
+        pinButton.style.backgroundColor = '#007bff';
+        pinnedContainer.appendChild(row);
+      }
+    }
+
+
+
+
+
+    function deleteRow(rowIndex) {
+      const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
+      const deletedData = JSON.parse(localStorage.getItem('deletedData')) || [];
+
+      const deletedRow = storedData.splice(rowIndex, 1)[0];
+      deletedData.push(deletedRow);
+
+      localStorage.setItem('excelData', JSON.stringify(storedData));
+      localStorage.setItem('deletedData', JSON.stringify(deletedData));
+
+
+      currentPage = 0;
+      displayTable(storedData);
+    }
+
 
     window.onscroll = function () {
       if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
@@ -401,12 +564,17 @@
     };
 
     function loadMoreData() {
-      const storedData = localStorage.getItem('excelData');
-      if (storedData) {
-        const data = JSON.parse(storedData);
+      const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
+      const totalData = storedData.length;
+      const totalPages = Math.ceil(totalData / pageSize);
+
+      if (currentPage < totalPages - 1) {
+        currentPage++;
+        displayTable(storedData, true);
+      } else {
+        console.log("Đã tải hết dữ liệu.");
       }
     }
-
 
 
     function debouncedFilter() {
@@ -439,7 +607,13 @@
         const data = JSON.parse(storedData);
         displayTable(data);
       }
+
+      const table = document.getElementById('dataTable');
+      const pinnedRowsContainer = document.createElement('thead');
+      pinnedRowsContainer.id = 'pinnedRows';
+      table.insertBefore(pinnedRowsContainer, table.querySelector('thead + tbody'));
     });
+
 
   </script>
 </body>
