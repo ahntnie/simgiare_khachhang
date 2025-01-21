@@ -2,417 +2,446 @@
 <html lang="en">
 
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SIM GIÁ RẺ</title>
-  <style>
-    body {
-      font-family: 'Arial', sans-serif;
-      margin: 20px;
-      background-color: #f5f5f5;
-      color: #333;
-    }
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SIM GIÁ RẺ</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 20px;
+            background-color: #f5f5f5;
+            color: #333;
+        }
 
-    h1 {
-      text-align: center;
-      color: #333;
-      margin-bottom: 20px;
-      font-size: 2rem;
-      /* Kích thước linh hoạt */
-    }
+        h1 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+            font-size: 2rem;
+        }
 
-    input[type="file"] {
-      display: block;
-      margin: 0 auto 20px;
-      padding: 10px;
-      font-size: 1rem;
-      background-color: #4CAF50;
-      color: white;
-      border: none;
-      border-radius: 5px;
-      cursor: pointer;
-    }
+        input[type="file"] {
+            display: block;
+            margin: 0 auto 20px;
+            padding: 10px;
+            font-size: 1rem;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
 
-    input[type="file"]:hover {
-      background-color: #45a049;
-    }
+        input[type="file"]:hover {
+            background-color: #45a049;
+        }
 
-    table {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 20px;
-      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+            background-color: rgb(233, 233, 132);
+        }
 
-    th,
-    td {
-      border: 1px solid black;
-      padding: 12px;
-      text-align: center;
-      font-size: 1rem;
-      transition: background-color 0.3s ease;
-    }
+        td:nth-child(3),
+        th:nth-child(3) {
+            width: 80px;
+            padding: 2px 5px;
+            word-wrap: break-word;
+            text-align: center;
+        }
 
-    th {
-      background-color: #FF6347;
-      color: white;
-    }
+        th,
+        td {
+            border: 1px solid red;
+            padding: 12px;
+            text-align: center;
+            font-size: 1rem;
+            transition: background-color 0.3s ease;
+        }
 
-    td {
-      background-color: rgb(233, 233, 132);
-    }
+        th {
+            background-color: red;
+            color: white;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
 
-    /* Giữ màu sắc nguyên vẹn */
-    .moc {
-      background-color: #228B22;
-      color: white;
-      font-weight: bold;
-    }
+        td {
+            background-color: rgb(233, 233, 132);
+        }
 
-    .hoa {
-      background-color: red;
-      color: white;
-      font-weight: bold;
-    }
+        .moc {
+            background-color: #00b050;
+            color: white;
+            font-weight: bold;
+            border-radius: 30px;
+            padding: 2px 10px;
+            text-align: center;
+            border: 1px solid #006400;
+        }
 
-    .thuy {
-      background-color: #1E90FF;
-      color: white;
-      font-weight: bold;
-    }
+        .hoa {
+            background-color: #ff0000;
+            color: white;
+            font-weight: bold;
+            border-radius: 30px;
+            padding: 2px 10px;
+            text-align: center;
+            border: 1px solid #800000;
+        }
 
-    .tho {
-      background-color: #A9A9A9;
-      color: white;
-      font-weight: bold;
-    }
+        .thuy {
+            background-color: #00b0f0;
+            color: white;
+            font-weight: bold;
+            border-radius: 30px;
+            padding: 2px 10px;
+            text-align: center;
+            border: 1px solid #005f99;
+        }
 
-    .kim {
-      background-color: #FFD700;
-      color: black;
-      font-weight: bold;
-    }
+        .tho {
+            background-color: #ffc000;
+            color: white;
+            font-weight: bold;
+            border-radius: 30px;
+            padding: 2px 10px;
+            text-align: center;
+            border: 1px solid #b38600;
+        }
 
-    .gia {
-      color: #FF0000;
-      font-weight: bold;
-    }
+        .kim {
+            background-color: #808080;
+            color: white;
+            font-weight: bold;
+            border-radius: 30px;
+            padding: 2px 10px;
+            text-align: center;
+            border: 1px solid #4d4d4d;
+        }
 
-    .sim {
-      color: #000000;
-      font-weight: bold;
-    }
+        .gia {
+            color: #FF0000;
+            font-weight: bold;
+        }
 
-    /* Thanh tìm kiếm và bộ lọc */
-    .filter-container {
-      display: flex;
-      flex-wrap: wrap;
-      justify-content: center;
-      gap: 10px;
-      margin-bottom: 20px;
-    }
+        .sim {
+            color: #000000;
+            font-weight: bold;
+        }
 
-    .filter-container input,
-    .filter-container select {
-      padding: 10px;
-      font-size: 1rem;
-      border-radius: 5px;
-      border: 1px solid #ccc;
-      flex: 1 1 150px;
-      /* Linh hoạt kích thước */
-    }
+        .filter-container {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            padding: 10px;
+            background-color: #f5f5f5;
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+        }
 
-    .scroll-button {
-      position: fixed;
-      top: 30px;
-      right: 10px;
-      padding: 10px 20px;
-      background-color: #4CAF50;
-      color: white;
-      font-size: 1rem;
-      border: none;
-      border-radius: 50px;
-      cursor: pointer;
-    }
+        .filter-container input,
+        .filter-container select {
+            padding: 10px;
+            font-size: 1rem;
+            border-radius: 5px;
+            border: 1px solid #ccc;
+            flex: 1 1 150px;
+        }
 
-    .scroll-button:hover {
-      background-color: #45a049;
-    }
 
-    /* Responsive Design */
-    @media (max-width: 768px) {
-      body {
-        margin: 10px;
-      }
 
-      h1 {
-        font-size: 1.5rem;
-      }
+        @media (max-width: 768px) {
+            body {
+                margin: 10px;
+            }
 
-      input[type="file"] {
-        font-size: 0.9rem;
-        padding: 8px;
-      }
+            h1 {
+                font-size: 1.5rem;
+            }
 
-      th,
-      td {
-        font-size: 0.9rem;
-        padding: 8px;
-      }
+            input[type="file"] {
+                font-size: 0.9rem;
+                padding: 8px;
+            }
 
-      .filter-container input,
-      .filter-container select {
-        font-size: 0.9rem;
-        padding: 8px;
-        flex: 1 1 100px;
-      }
+            th,
+            td {
+                border: 1px solid red;
+                padding: 12px;
+                text-align: center;
+                font-size: 1rem;
+                transition: background-color 0.3s ease;
+            }
 
-      .scroll-button {
-        font-size: 0.9rem;
-        padding: 8px 15px;
-      }
-    }
+            th {
+                background-color: red;
+                color: white;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
 
-    @media (max-width: 480px) {
-      h1 {
-        font-size: 1.2rem;
-      }
+            .filter-container input,
+            .filter-container select {
+                font-size: 0.9rem;
+                padding: 8px;
+                flex: 1 1 100px;
+            }
 
-      .filter-container input,
-      .filter-container select {
-        font-size: 0.8rem;
-        padding: 6px;
-      }
+        }
 
-      th,
-      td {
-        font-size: 0.8rem;
-        padding: 6px;
-      }
+        @media (max-width: 480px) {
+            h1 {
+                font-size: 1.2rem;
+            }
 
-      .scroll-button {
-        font-size: 0.8rem;
-        padding: 6px 10px;
-      }
-    }
-  </style>
+            .filter-container input,
+            .filter-container select {
+                font-size: 0.8rem;
+                padding: 6px;
+            }
+
+            th,
+            td {
+                border: 1px solid red;
+                padding: 12px;
+                text-align: center;
+                font-size: 1rem;
+                transition: background-color 0.3s ease;
+            }
+
+            th {
+                background-color: red;
+                color: white;
+                position: sticky;
+                top: 0;
+                z-index: 1;
+            }
+
+        }
+    </style>
 </head>
 
 <body>
-  <h1>CHỌN FILE EXCEL ĐỂ EXPORT SIM</h1>
-  <input type="file" id="excelFile" accept=".xlsx, .xls" />
+    <h1>CHỌN FILE EXCEL ĐỂ EXPORT SIM</h1>
+    <input type="file" id="excelFile" accept=".xlsx, .xls" />
 
-  <!-- Bộ lọc và tìm kiếm -->
-  <div class="filter-container">
-    <input type="text" id="searchInput" placeholder="Tìm kiếm STT..." onkeyup="debouncedFilter()" />
-    <select id="mangFilter" onchange="debouncedFilter()">
-      <option value="">Chọn Mệnh</option>
-      <option value="mộc">Mộc</option>
-      <option value="hỏa">Hỏa</option>
-      <option value="thủy">Thủy</option>
-      <option value="thổ">Thổ</option>
-      <option value="kim">Kim</option>
-    </select>
-    <input type="text" id="middleFilter" placeholder="Tìm kiếm 4 số giữa SIM..." onkeyup="debouncedFilter()" />
-    <input type="text" id="startFilter" placeholder="Đầu số" onkeyup="debouncedFilter()" />
-    <input type="text" id="endFilter" placeholder="Cuối số" onkeyup="debouncedFilter()" />
-  </div>
+    <div class="filter-container">
+        <!-- <input type="text" id="searchInput" placeholder="Tìm kiếm STT..." onkeyup="debouncedFilter()" /> -->
+        <select id="mangFilter" onchange="debouncedFilter()">
+            <option value="">Chọn Mệnh</option>
+            <option value="mộc">Mộc</option>
+            <option value="hỏa">Hỏa</option>
+            <option value="thủy">Thủy</option>
+            <option value="thổ">Thổ</option>
+            <option value="kim">Kim</option>
+        </select>
+        <!-- <input type="text" id="startFilter" placeholder="Đầu số" onkeyup="debouncedFilter()" />
+        <input type="text" id="middleFilter" placeholder="Tìm kiếm 4 số giữa SIM..." onkeyup="debouncedFilter()" />
+        <input type="text" id="endFilter" placeholder="Cuối số" onkeyup="debouncedFilter()" /> -->
+    </div>
 
-  <table id="dataTable">
-    <thead></thead>
-    <tbody></tbody>
-  </table>
+    <table id="dataTable">
+        <thead></thead>
+        <tbody></tbody>
+    </table>
 
-  <button id="scrollButton" class="scroll-button" onclick="toggleAutoScroll()">Bật Cuộn Tự Động</button>
 
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
-  <script>
-    let autoScrollInterval;
-    let autoScrollActive = false;
-    let timeoutId;
-    let isFiltering = false; // Cờ kiểm soát chế độ tìm kiếm
-
-    function toggleAutoScroll() {
-      if (autoScrollActive) {
-        clearInterval(autoScrollInterval);
-        document.getElementById('scrollButton').textContent = 'Bật Cuộn Tự Động';
-      } else {
-        startAutoScroll();
-        document.getElementById('scrollButton').textContent = 'Dừng Cuộn Tự Động';
-      }
-      autoScrollActive = !autoScrollActive;
-    }
-
-    function startAutoScroll() {
-      autoScrollInterval = setInterval(() => {
-        window.scrollBy(0, 2);
-        if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
-          window.scrollTo(0, 0);
-        }
-      }, 30);
-    }
-
-    let currentPage = 0;
-    const pageSize = 100;
-
-    document.getElementById('excelFile').addEventListener('change', function (event) {
-      const file = event.target.files[0];
-      if (!file) {
-        alert("Please select a file!");
-        return;
-      }
-
-      const reader = new FileReader();
-      reader.onload = function (e) {
-        const data = new Uint8Array(e.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-
-        const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-
-        const filteredData = jsonData.slice(1000);
-        localStorage.setItem('excelData', JSON.stringify(filteredData));
-
-        displayTable(filteredData);
-      };
-
-      reader.readAsArrayBuffer(file);
-    });
-
-    function displayTable(data) {
-      const tableHead = document.querySelector('#dataTable thead');
-      const tableBody = document.querySelector('#dataTable tbody');
-
-      tableBody.innerHTML = ''; // Xóa nội dung cũ
-
-      if (data.length === 0) {
-        alert("No data found in the file.");
-        return;
-      }
-
-      if (tableHead.innerHTML === '') {
-        const headers = ['STT', 'SIM', 'MỆNH', 'GIÁ'];
-        const headerRow = document.createElement('tr');
-        headers.forEach(header => {
-          const th = document.createElement('th');
-          th.textContent = header;
-          headerRow.appendChild(th);
-        });
-        tableHead.appendChild(headerRow);
-      }
-
-      data.forEach((row, index) => {
-        const tr = document.createElement('tr');
-        const rowData = row.slice(1, 5);
-
-        const sttCell = document.createElement('td');
-        sttCell.textContent = index + 1;
-        tr.appendChild(sttCell);
-
-        rowData.forEach((cell, cellIndex) => {
-          const td = document.createElement('td');
-          td.textContent = cell || '';
-
-          if (cellIndex === 1) {
-            const normalizedValue = (cell || '').trim().toLowerCase();
-            switch (normalizedValue) {
-              case 'mộc':
-                td.classList.add('moc');
-                break;
-              case 'hỏa':
-                td.classList.add('hoa');
-                break;
-              case 'thủy':
-                td.classList.add('thuy');
-                break;
-              case 'thổ':
-                td.classList.add('tho');
-                break;
-              case 'kim':
-                td.classList.add('kim');
-                break;
+    <script>
+        let autoScrollInterval;
+        let autoScrollActive = false;
+        let timeoutId;
+        let isFiltering = false;
+        function toggleAutoScroll() {
+            if (autoScrollActive) {
+                clearInterval(autoScrollInterval);
+                autoScrollActive = false;
+            } else {
+                startAutoScroll();
+                autoScrollActive = true;
             }
-          }
+        }
 
-          if (cellIndex === 2) td.classList.add('gia');
-          if (cellIndex === 0) td.classList.add('sim');
+        function startAutoScroll() {
+            const scrollStep = 1;
+            const scrollInterval = 50;
 
-          tr.appendChild(td);
+            autoScrollInterval = setInterval(() => {
+                window.scrollBy(0, scrollStep);
+                if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
+                    loadMoreData();
+                }
+            }, scrollInterval);
+        }
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'ArrowUp') {
+                toggleAutoScroll();
+            }
+        });
+        let currentPage = 0;
+        const pageSize = 100;
+
+        document.getElementById('excelFile').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (!file) {
+                alert("Please select a file!");
+                return;
+            }
+
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const firstSheetName = workbook.SheetNames[0];
+                const worksheet = workbook.Sheets[firstSheetName];
+
+                const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                const filteredData = jsonData.slice(1000);
+                localStorage.setItem('excelData', JSON.stringify(filteredData));
+
+                displayTable(filteredData);
+            };
+
+            reader.readAsArrayBuffer(file);
         });
 
-        tableBody.appendChild(tr);
-      });
-    }
+        function displayTable(data, append = false) {
+            const tableHead = document.querySelector('#dataTable thead');
+            const tableBody = document.querySelector('#dataTable tbody');
 
-    window.onscroll = function () {
-      if (!isFiltering && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        loadMoreData();
-      }
-    };
+            if (!append) {
+                tableBody.innerHTML = '';
+            }
 
-    function loadMoreData() {
-      const storedData = localStorage.getItem('excelData');
-      if (storedData) {
-        const data = JSON.parse(storedData);
+            if (data.length === 0) {
+                alert("No data found in the file.");
+                return;
+            }
 
-        const nextData = data.slice((currentPage + 1) * pageSize, (currentPage + 2) * pageSize);
-        if (nextData.length > 0) {
-          currentPage++;
-          displayTable(nextData);
+            if (!append && tableHead.innerHTML === '') {
+                const headers = ['STT', 'SIM VIETTEL', 'MỆNH', 'GIÁ'];
+                const headerRow = document.createElement('tr');
+                headers.forEach(header => {
+                    const th = document.createElement('th');
+                    th.textContent = header;
+                    headerRow.appendChild(th);
+                });
+                tableHead.appendChild(headerRow);
+            }
+
+            data.forEach((row, index) => {
+                const tr = document.createElement('tr');
+                const rowData = row.slice(1, 5);
+
+                const sttCell = document.createElement('td');
+                sttCell.textContent = index + 1 + currentPage * pageSize;
+                tr.appendChild(sttCell);
+
+                rowData.forEach((cell, cellIndex) => {
+                    const td = document.createElement('td');
+                    td.textContent = cell || '';
+
+                    if (cellIndex === 1) {
+                        const normalizedValue = (cell || '').trim().toLowerCase();
+                        switch (normalizedValue) {
+                            case 'mộc':
+                                td.classList.add('moc');
+                                break;
+                            case 'hỏa':
+                                td.classList.add('hoa');
+                                break;
+                            case 'thủy':
+                                td.classList.add('thuy');
+                                break;
+                            case 'thổ':
+                                td.classList.add('tho');
+                                break;
+                            case 'kim':
+                                td.classList.add('kim');
+                                break;
+                        }
+                    }
+
+                    if (cellIndex === 2) td.classList.add('gia');
+                    if (cellIndex === 0) td.classList.add('sim');
+
+                    tr.appendChild(td);
+                });
+
+                tableBody.appendChild(tr);
+            });
         }
-      }
-    }
 
-    function debouncedFilter() {
-      clearTimeout(timeoutId);
-      timeoutId = setTimeout(filterTable, 200);
-    }
 
-    function filterTable() {
-      isFiltering = true; // Kích hoạt chế độ tìm kiếm
+        window.onscroll = function () {
+            if (!isFiltering && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+                loadMoreData();
+            }
+        };
 
-      const searchInput = document.getElementById('searchInput').value.toLowerCase();
-      const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
-      const startFilter = document.getElementById('startFilter').value.toLowerCase();
-      const endFilter = document.getElementById('endFilter').value.toLowerCase();
-      const middleFilter = document.getElementById('middleFilter').value.toLowerCase();
-      const rows = document.querySelectorAll('#dataTable tbody tr');
-
-      let visibleIndex = 0;
-      rows.forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        const sim = cells[1].textContent.toLowerCase().replace(/\./g, '');
-        const mệnh = cells[2].textContent.toLowerCase();
-        const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
-        const matchSim = sim.includes(searchInput);
-        const matchMệnh = mệnh.includes(mệnhFilter);
-        const matchStart = startFilter === '' || sim.startsWith(startFilter);
-        const matchEnd = endFilter === '' || sim.endsWith(endFilter);
-        const matchMiddle4Digits = middle4Digits.includes(middleFilter);
-
-        if (matchSim && matchMệnh && matchStart && matchEnd && matchMiddle4Digits) {
-          row.style.display = '';
-          cells[0].textContent = ++visibleIndex;
-        } else {
-          row.style.display = 'none';
+        function loadMoreData() {
+            const storedData = localStorage.getItem('excelData');
+            if (storedData) {
+                const data = JSON.parse(storedData);
+                const nextData = data.slice((currentPage + 1) * pageSize, (currentPage + 2) * pageSize);
+                if (nextData.length > 0) {
+                    currentPage++;
+                    displayTable(nextData, true);
+                } else {
+                    clearInterval(autoScrollInterval);
+                    autoScrollActive = false;
+                    document.getElementById('scrollButton').textContent = 'Bật Cuộn Tự Động';
+                    alert('Đã tải hết dữ liệu!');
+                }
+            }
         }
-      });
-    }
 
 
 
-    document.addEventListener('DOMContentLoaded', function () {
-      const storedData = localStorage.getItem('excelData');
-      if (storedData) {
-        const data = JSON.parse(storedData);
-        displayTable(data.slice(0, pageSize));
-      }
-    });
+        function debouncedFilter() {
+            clearTimeout(timeoutId);
+            timeoutId = setTimeout(filterTable, 200);
+        }
 
-  </script>
+        function filterTable() {
+            const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
+            const rows = document.querySelectorAll('#dataTable tbody tr');
+
+            rows.forEach(row => {
+                const cells = row.getElementsByTagName('td');
+                const mệnh = cells[2]?.textContent.toLowerCase();
+
+                if (mệnhFilter === "" || mệnh.includes(mệnhFilter)) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+        }
+
+
+
+
+        document.addEventListener('DOMContentLoaded', function () {
+            const storedData = localStorage.getItem('excelData');
+            if (storedData) {
+                const data = JSON.parse(storedData);
+                displayTable(data.slice(0, pageSize));
+            }
+        });
+
+    </script>
 </body>
 
 </html>
