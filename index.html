@@ -67,7 +67,7 @@
 
     td {
       border: 1px solid red;
-      padding: 12px;
+      padding: 5px;
       text-align: center;
       font-size: 1rem;
       transition: background-color 0.3s ease;
@@ -149,6 +149,41 @@
       font-weight: bold;
     }
 
+
+
+    tr.pinned {
+      background-color: #d1ecf1;
+      border: 2px solid #0c5460;
+      border-left: none;
+      border-right: none;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.3);
+    }
+
+    tr.pinned td.moc,
+    tr.pinned td.hoa,
+    tr.pinned td.thuy,
+    tr.pinned td.tho,
+    tr.pinned td.kim {
+      background-color: #FFFFFF !important;
+      color: black;
+      font-weight: bold;
+    }
+
+    tr.pinned td {
+      background-color: #f8f9fa !important;
+    }
+
+
+    tr.pinned:hover {
+      background-color: #c3e0e8;
+    }
+
+    thead#pinnedRows {
+      position: sticky;
+      top: 45px;
+      z-index: 3;
+    }
+
     .filter-container {
       display: flex;
       flex-wrap: wrap;
@@ -162,46 +197,9 @@
       z-index: 1000;
     }
 
-    tr.pinned {
-      background-color: #d1ecf1;
-      border: 2px solid #0c5460;
-      border-left: none;
-      border-right: none;
-    }
-
-    tr.pinned td.moc {
-      background-color: #00b050 !important;
-    }
-
-    tr.pinned td.hoa {
-      background-color: #ff0000 !important;
-    }
-
-    tr.pinned td.thuy {
-      background-color: #00b0f0 !important;
-    }
-
-    tr.pinned td.tho {
-      background-color: #808080 !important;
-    }
-
-    tr.pinned td.kim {
-      background-color: #ffc000 !important;
-    }
-
-    tr.pinned:hover {
-      background-color: #c3e0e8;
-    }
-
-    thead#pinnedRows {
-      position: sticky;
-      top: 49px;
-      z-index: 3;
-    }
-
     .filter-container input,
     .filter-container select {
-      padding: 10px;
+      padding: 8px;
       font-size: 1rem;
       border-radius: 5px;
       border: 1px solid #ccc;
@@ -307,18 +305,18 @@
   <button id="exportExcel" style="margin-top: 20px; padding: 10px; cursor: pointer;">Xuất File Excel</button>
 
   <div class="filter-container">
-    <!-- <input type="text" id="searchInput" placeholder="Tìm kiếm STT..." onkeyup="debouncedFilter()" /> -->
-    <select id="mangFilter" onchange="debouncedFilter()">
+    <input type="text" id="searchInput" placeholder="Tìm kiếm STT..." onkeyup="debouncedFilter()" />
+    <!-- <select id="mangFilter" onchange="debouncedFilter()">
       <option value="">Chọn Mệnh</option>
       <option value="mộc">Mộc</option>
       <option value="hỏa">Hỏa</option>
       <option value="thủy">Thủy</option>
       <option value="thổ">Thổ</option>
       <option value="kim">Kim</option>
-    </select>
-    <!-- <input type="text" id="startFilter" placeholder="Đầu số" onkeyup="debouncedFilter()" />
-        <input type="text" id="middleFilter" placeholder="Tìm kiếm 4 số giữa SIM..." onkeyup="debouncedFilter()" />
-        <input type="text" id="endFilter" placeholder="Cuối số" onkeyup="debouncedFilter()" /> -->
+    </select> -->
+    <input type="text" id="startFilter" placeholder="Đầu số" onkeyup="debouncedFilter()" />
+    <input type="text" id="middleFilter" placeholder="Tìm kiếm 4 số giữa SIM..." onkeyup="debouncedFilter()" />
+    <input type="text" id="endFilter" placeholder="Cuối số" onkeyup="debouncedFilter()" />
   </div>
 
   <table id="dataTable">
@@ -403,7 +401,7 @@
     });
 
     let currentPage = 0;
-    const pageSize = 100;
+    const pageSize = 500;
     function displayTable(data, append = false) {
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
@@ -448,17 +446,47 @@
 
         row.slice(0, 4).forEach((cell, colIndex) => {
           const td = document.createElement('td');
-          td.textContent = cell || '';
 
           if (colIndex === 2) {
             const normalizedValue = (cell || '').trim().toLowerCase();
+            const label = document.createElement('span');
+            label.style.padding = '5px 10px';
+            label.style.borderRadius = '30px';
+            label.style.display = 'inline-block';
+
             switch (normalizedValue) {
-              case 'mộc': td.classList.add('moc'); break;
-              case 'hỏa': td.classList.add('hoa'); break;
-              case 'thủy': td.classList.add('thuy'); break;
-              case 'thổ': td.classList.add('tho'); break;
-              case 'kim': td.classList.add('kim'); break;
+              case 'mộc':
+                label.style.backgroundColor = '#00b050';
+                label.textContent = 'Mộc';
+                label.style.color = 'white';
+                break;
+              case 'hỏa':
+                label.style.backgroundColor = '#ff0000';
+                label.textContent = 'Hỏa';
+                label.style.color = 'white';
+
+                break;
+              case 'thủy':
+                label.style.backgroundColor = '#00b0f0';
+                label.textContent = 'Thủy';
+                label.style.color = 'white';
+                break;
+              case 'thổ':
+                label.style.backgroundColor = '#808080';
+                label.textContent = 'Thổ';
+                label.style.color = 'white';
+
+                break;
+              case 'kim':
+                label.style.backgroundColor = '#ffc000';
+                label.textContent = 'Kim';
+                label.style.color = 'white';
+                break;
             }
+
+            td.appendChild(label);
+          } else {
+            td.textContent = cell || '';
           }
 
           if (colIndex === 3) td.classList.add('gia');
@@ -466,6 +494,8 @@
 
           tr.appendChild(td);
         });
+
+
 
         const deleteCell = document.createElement('td');
         const deleteButton = document.createElement('button');
@@ -506,8 +536,6 @@
 
         const originalIndex = parseInt(row.getAttribute('data-index'), 10);
         const rows = Array.from(tableBody.querySelectorAll('tr'));
-
-        // Tìm vị trí ban đầu và chèn lại
         let inserted = false;
         for (let i = 0; i < rows.length; i++) {
           if (parseInt(rows[i].getAttribute('data-index'), 10) > originalIndex) {
@@ -516,7 +544,6 @@
             break;
           }
         }
-
         if (!inserted) {
           tableBody.appendChild(row);
         }
@@ -528,6 +555,7 @@
         pinnedContainer.appendChild(row);
       }
     }
+
 
 
 
@@ -570,10 +598,12 @@
       if (currentPage < totalPages - 1) {
         currentPage++;
         displayTable(storedData, true);
+        filterTable(); // Chạy lại bộ lọc sau khi thêm dữ liệu
       } else {
         console.log("Đã tải hết dữ liệu.");
       }
     }
+
 
 
     function debouncedFilter() {
@@ -581,22 +611,45 @@
       timeoutId = setTimeout(filterTable, 200);
     }
 
+    // function filterTable() {
+    //   const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
+    //   const rows = document.querySelectorAll('#dataTable tbody tr');
+
+    //   rows.forEach(row => {
+    //     const cells = row.getElementsByTagName('td');
+    //     const mệnh = cells[3]?.textContent.toLowerCase();
+
+    //     if (mệnhFilter === "" || mệnh.includes(mệnhFilter)) {
+    //       row.style.display = '';
+    //     } else {
+    //       row.style.display = 'none';
+    //     }
+    //   });
+    // }
     function filterTable() {
-      const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
+      const searchInput = document.getElementById('searchInput').value.toLowerCase();
+      const startFilter = document.getElementById('startFilter').value.toLowerCase();
+      const endFilter = document.getElementById('endFilter').value.toLowerCase();
+      const middleFilter = document.getElementById('middleFilter').value.toLowerCase();
       const rows = document.querySelectorAll('#dataTable tbody tr');
 
       rows.forEach(row => {
         const cells = row.getElementsByTagName('td');
-        const mệnh = cells[3]?.textContent.toLowerCase();
+        const sim = cells[2]?.textContent.toLowerCase().replace(/\./g, '');
+        const stt = cells[1]?.textContent.toLowerCase();
+        const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
+        const matchSTT = stt.includes(searchInput);
+        const matchStart = startFilter === '' || sim.startsWith(startFilter);
+        const matchEnd = endFilter === '' || sim.endsWith(endFilter);
+        const matchMiddle4Digits = middle4Digits.includes(middleFilter);
 
-        if (mệnhFilter === "" || mệnh.includes(mệnhFilter)) {
+        if (matchSTT && matchStart && matchEnd && matchMiddle4Digits) {
           row.style.display = '';
         } else {
           row.style.display = 'none';
         }
       });
     }
-
 
 
 
