@@ -317,21 +317,18 @@
       reader.readAsArrayBuffer(file);
     });
 
-    function displayTable(data, append = false) {
+    function displayTable(data) {
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
-
-      if (!append) {
-        tableBody.innerHTML = '';
-      }
 
       if (data.length === 0) {
         alert("No data found in the file.");
         return;
       }
 
-      if (!append && tableHead.innerHTML === '') {
-        const headers = ['STT', 'SIM VIETTEL', 'MỆNH', 'GIÁ'];
+
+      if (tableHead.innerHTML === '') {
+        const headers = ['STT', 'SIM', 'MỆNH', 'GIÁ'];
         const headerRow = document.createElement('tr');
         headers.forEach(header => {
           const th = document.createElement('th');
@@ -341,19 +338,17 @@
         tableHead.appendChild(headerRow);
       }
 
-      data.forEach((row, index) => {
+      data.forEach(row => {
         const tr = document.createElement('tr');
-        const rowData = row.slice(1, 5);
-
-        const sttCell = document.createElement('td');
-        sttCell.textContent = index + 1 + currentPage * pageSize;
-        tr.appendChild(sttCell);
-
-        rowData.forEach((cell, cellIndex) => {
+        tr.onclick = function () {
+          highlightRow(this);
+        };
+        const rowData = row.slice(0, 5);
+        rowData.forEach((cell, index) => {
           const td = document.createElement('td');
           td.textContent = cell || '';
 
-          if (cellIndex === 1) {
+          if (index === 2) {
             const normalizedValue = (cell || '').trim().toLowerCase();
             switch (normalizedValue) {
               case 'mộc':
@@ -371,18 +366,32 @@
               case 'kim':
                 td.classList.add('kim');
                 break;
+              default:
+                td.style.backgroundColor = '#fff';
             }
           }
 
-          if (cellIndex === 2) td.classList.add('gia');
-          if (cellIndex === 0) td.classList.add('sim');
+          if (index === 3) {
+            td.classList.add('gia');
+          }
+
+          if (index === 1) {
+            td.classList.add('sim');
+          }
 
           tr.appendChild(td);
         });
 
         tableBody.appendChild(tr);
       });
+
     }
+
+    window.onscroll = function () {
+      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
+        loadMoreData();
+      }
+    };
 
 
     window.onscroll = function () {
@@ -395,16 +404,6 @@
       const storedData = localStorage.getItem('excelData');
       if (storedData) {
         const data = JSON.parse(storedData);
-        const nextData = data.slice((currentPage + 1) * pageSize, (currentPage + 2) * pageSize);
-        if (nextData.length > 0) {
-          currentPage++;
-          displayTable(nextData, true);
-        } else {
-          clearInterval(autoScrollInterval);
-          autoScrollActive = false;
-          document.getElementById('scrollButton').textContent = 'Bật Cuộn Tự Động';
-          alert('Đã tải hết dữ liệu!');
-        }
       }
     }
 
@@ -438,7 +437,7 @@
       const storedData = localStorage.getItem('excelData');
       if (storedData) {
         const data = JSON.parse(storedData);
-        displayTable(data.slice(0, pageSize));
+        displayTable(data);
       }
     });
 
