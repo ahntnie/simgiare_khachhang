@@ -38,7 +38,7 @@
 
     table {
       border-spacing: 15px 0;
-      width: 35%;
+      width: 25%;
       border-collapse: collapse;
       margin: 20px auto;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -47,9 +47,19 @@
     }
 
     td:nth-child(1),
-    th:nth-child(1) {
-      width: 80px;
-      padding: 2px 5px;
+    th:nth-child(1),
+    td:nth-child(2),
+    th:nth-child(2) {
+      width: 30px;
+      padding: 2px 3px;
+      word-wrap: break-word;
+      text-align: center;
+    }
+
+    td:nth-child(3),
+    th:nth-child(3) {
+      width: 30px;
+      padding: 2px 10px;
       word-wrap: break-word;
       text-align: center;
     }
@@ -58,12 +68,19 @@
     th:nth-child(5),
     td:nth-child(6),
     th:nth-child(6) {
-      width: 80px;
-      padding: 2px 5px;
+      width: 40px;
+      padding: 2px 3px;
       word-wrap: break-word;
       text-align: center;
     }
 
+    td:nth-child(4),
+    th:nth-child(4) {
+      width: 40px;
+      padding: 2px 7px;
+      word-wrap: break-word;
+      text-align: center;
+    }
 
     td {
       border: 1px solid red;
@@ -76,7 +93,6 @@
 
     th {
       background-color: red;
-      border: 1px solid black;
       color: white;
       padding: 12px;
       position: sticky;
@@ -180,7 +196,7 @@
 
     thead#pinnedRows {
       position: sticky;
-      top: 45px;
+      top: 47px;
       z-index: 3;
     }
 
@@ -325,27 +341,25 @@
   <button id="exportExcel" style="margin-top: 20px; padding: 10px; cursor: pointer;">Xuất File Excel</button>
 
   <div class="filter-container">
-
-
     <div class="input-group">
       <input type="text" id="searchInput" placeholder="Tìm STT..." />
-      <button onclick="filterTable()">Tìm</button>
+      <button id="button-search" onclick="filterTable()">Tìm</button>
     </div>
     <div class="input-group">
       <input type="text" id="searchSimInput" placeholder="Tìm SĐT..." />
-      <button onclick="filterTable()">Tìm</button>
+      <button id="button-search" onclick="filterTable()">Tìm</button>
     </div>
     <div class="input-group">
       <input type="text" id="startFilter" placeholder="Đầu số" />
-      <button onclick="filterTable()">Tìm</button>
+      <button id="button-search" onclick="filterTable()">Tìm</button>
     </div>
     <div class="input-group">
       <input type="text" id="middleFilter" placeholder="4 số giữa" />
-      <button onclick="filterTable()">Tìm</button>
+      <button id="button-search" onclick="filterTable()">Tìm</button>
     </div>
     <div class="input-group">
       <input type="text" id="endFilter" placeholder="Cuối số" />
-      <button onclick="filterTable()">Tìm</button>
+      <button id="button-search" onclick="filterTable()">Tìm</button>
     </div>
   </div>
   <table id="dataTable">
@@ -356,19 +370,19 @@
   <button id="toggleScroll" style="
   position: fixed;
   bottom: 20px;
-  right: 20px;
+  right: 50px;
   z-index: 1000;
   background-color: rgb(33, 164, 230);
   color: white;
   border: none;
-  border-radius: 50%;
-  width: 60px;
+  border-radius: 10%;
+  width: 110px;
   height: 60px;
   font-size: 1.2rem;
   box-shadow: 0 4px 6px rgba(0,0,0,0.1);
   cursor: pointer;
 ">
-    ⬇️
+    Start/Stop
   </button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
@@ -381,11 +395,11 @@
     document.getElementById('toggleScroll').addEventListener('click', () => {
       if (autoScrollActive) {
         stopAutoScroll();
-        document.getElementById('toggleScroll').textContent = '⬇️';
+        document.getElementById('toggleScroll').textContent = 'Start/Stop';
         document.getElementById('toggleScroll').style.backgroundColor = rgb(33, 164, 230);
       } else {
         startAutoScroll();
-        document.getElementById('toggleScroll').textContent = '⏹️';
+        document.getElementById('toggleScroll').textContent = 'Start/Stop';
         document.getElementById('toggleScroll').style.backgroundColor = rgb(33, 164, 230);
       }
     });
@@ -394,7 +408,7 @@
       autoScrollActive = false;
     }
     function startAutoScroll() {
-      if (autoScrollActive) return; // Nếu đang tự động cuộn thì không làm gì
+      if (autoScrollActive) return;
       autoScrollActive = true;
       const scrollStep = 1;
       const scrollInterval = 50;
@@ -448,13 +462,11 @@
 
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        // Lưu trữ toàn bộ dữ liệu
-        excelData = jsonData.slice(1000); // Chỉ lấy dữ liệu cần thiết, nếu có dữ liệu giới hạn
+        excelData = jsonData.slice(1000);
 
-        // Lưu vào localStorage
         localStorage.setItem('excelData', JSON.stringify(excelData));
 
-        displayTable(excelData); // Hiển thị bảng ban đầu
+        displayTable(excelData);
       };
 
       reader.readAsArrayBuffer(file);
@@ -466,11 +478,9 @@
     function displayTable(data, append = false) {
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
-
-      // Xóa dữ liệu cũ trước khi hiển thị kết quả mới
       if (!append) {
         tableBody.innerHTML = '';
-        currentPage = 0; // Reset trang hiện tại
+        currentPage = 0;
       }
 
       if (data.length === 0) {
@@ -665,19 +675,25 @@
       clearTimeout(timeoutId);
       timeoutId = setTimeout(filterTable, 200);
     }
-    document.getElementById('searchInput').addEventListener('click', () => {
+    document.getElementById('button-search').addEventListener('click', () => {
       const searchSimInput = document.getElementById('searchSimInput').value.trim();
       const startFilter = document.getElementById('startFilter').value.trim();
       const middleFilter = document.getElementById('middleFilter').value.trim();
       const endFilter = document.getElementById('endFilter').value.trim();
-
-      if (!searchSimInput && !startFilter && !middleFilter && !endFilter) {
-        isFiltering = false;
-        currentPage = 0;
-        displayTable(JSON.parse(localStorage.getItem('excelData')).slice(0, pageSize));
+      const searchInput = document.getElementById('searchInput').value.trim();
+      if (!searchSimInput && !startFilter && !middleFilter && !endFilter && !searchInput) {
+        if (isFiltering) {
+          isFiltering = false;
+          currentPage = Math.floor(scrollPosition / pageSize);
+          displayTable(JSON.parse(localStorage.getItem('excelData')).slice(0, pageSize));
+          window.scrollTo(0, scrollPosition);
+        }
+      } else {
+        filterTable();
       }
     });
 
+    let scrollPosition = 0;
     let currentScrollIndex = 0;
     function filterTable() {
       const searchSimInput = document.getElementById('searchSimInput').value.toLowerCase().trim();
@@ -685,7 +701,6 @@
       const startFilter = document.getElementById('startFilter').value.toLowerCase().trim();
       const middleFilter = document.getElementById('middleFilter').value.toLowerCase().trim();
       const endFilter = document.getElementById('endFilter').value.toLowerCase().trim();
-
       const tableBody = document.querySelector('#dataTable tbody');
       const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
 
@@ -703,14 +718,11 @@
           isFiltering = false;
           currentPage = Math.floor(currentScrollIndex / pageSize);
           displayTable(storedData.slice(currentPage * pageSize, (currentPage + 1) * pageSize));
-
-          // Quay lại vị trí cuộn ban đầu
           window.scrollTo(0, scrollPosition);
         }
         return;
       }
 
-      // Lọc dữ liệu theo điều kiện tìm kiếm
       const filteredData = storedData.filter(row => {
         const stt = (row[0] || '').toString().toLowerCase().trim();
         const sim = (row[1] || '').toString().toLowerCase().trim().replace(/\./g, '');
