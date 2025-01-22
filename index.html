@@ -339,7 +339,10 @@
   <h1>CHỌN FILE EXCEL ĐỂ EXPORT SIM</h1>
   <input type="file" id="excelFile" accept=".xlsx, .xls" />
   <button id="exportExcel" style="margin-top: 20px; padding: 10px; cursor: pointer;">Xuất File Excel</button>
-
+  <div id="toast"
+    style="display: none; position: fixed; bottom: 20px; left: 20px; background-color: #333; color: white; padding: 10px 20px; border-radius: 5px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); z-index: 1000;">
+    Không tìm thấy dữ liệu phù hợp.
+  </div>
   <div class="filter-container">
     <div class="input-group">
       <input type="text" id="searchInput" placeholder="Tìm STT..." />
@@ -354,7 +357,7 @@
       <button id="button-search" onclick="filterTable()">Tìm</button>
     </div>
     <div class="input-group">
-      <input type="text" id="middleFilter" placeholder="4 số giữa" />
+      <input type="text" id="middleFilter" placeholder="5 số giữa" />
       <button id="button-search" onclick="filterTable()">Tìm</button>
     </div>
     <div class="input-group">
@@ -478,16 +481,15 @@
     function displayTable(data, append = false) {
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
-      if (!append) {
-        tableBody.innerHTML = '';
-        currentPage = 0;
-      }
-
-      if (data.length === 0) {
-        alert("Không tìm thấy dữ liệu phù hợp.");
+      if (!append && data.length === 0) {
+        showToast("Không tìm thấy dữ liệu phù hợp.");
         return;
       }
 
+      if (!append) {
+        tableBody.innerHTML = ''; // Xóa dữ liệu cũ nếu không append
+        currentPage = 0;
+      }
       if (tableHead.innerHTML === '') {
         const headers = ['GHIM', 'STT', 'SIM', 'MỆNH', 'GIÁ', 'XÓA'];
         const headerRow = document.createElement('tr');
@@ -534,27 +536,37 @@
               case 'mộc':
                 label.style.backgroundColor = '#00b050';
                 label.textContent = 'Mộc';
-                label.style.color = 'white';
+                label.style.color = 'white'; label.style.fontSize = '14px';
+                label.style.padding = '3px 7px';
+
                 break;
               case 'hỏa':
                 label.style.backgroundColor = '#ff0000';
                 label.textContent = 'Hỏa';
                 label.style.color = 'white';
+                label.style.fontSize = '14px';
+                label.style.padding = '3px 7px';
                 break;
               case 'thủy':
                 label.style.backgroundColor = '#00b0f0';
                 label.textContent = 'Thủy';
-                label.style.color = 'white';
+                label.style.color = 'white'; label.style.fontSize = '14px';
+                label.style.padding = '3px 7px';
+
                 break;
               case 'thổ':
                 label.style.backgroundColor = '#808080';
                 label.textContent = 'Thổ';
-                label.style.color = 'white';
+                label.style.color = 'white'; label.style.fontSize = '14px';
+                label.style.padding = '3px 7px';
+
                 break;
               case 'kim':
                 label.style.backgroundColor = '#ffc000';
                 label.textContent = 'Kim';
-                label.style.color = 'white';
+                label.style.color = 'white'; label.style.fontSize = '14px';
+                label.style.padding = '3px 7px';
+
                 break;
             }
 
@@ -585,15 +597,29 @@
       });
 
       tableBody.appendChild(fragment);
-      if (!isFiltering && currentScrollIndex >= 0) {
+      if (isFiltering && currentScrollIndex >= 0) {
         const targetRow = tableBody.querySelector(`tr[data-index="${currentScrollIndex}"]`);
         if (targetRow) {
           targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
       }
     }
+    function showToast(message) {
+      const toast = document.getElementById('toast');
+      toast.textContent = message;
+      toast.style.display = 'block';
+      toast.style.opacity = '1';
+      toast.style.transform = 'translateY(0)';
 
 
+      setTimeout(() => {
+        toast.style.opacity = '0';
+        toast.style.transform = 'translateY(20px)';
+        setTimeout(() => {
+          toast.style.display = 'none';
+        }, 500);
+      }, 3000);
+    }
     function togglePin(row) {
       const pinButton = row.querySelector('td button');
       const pinnedContainer = document.querySelector('#pinnedRows');
@@ -726,7 +752,7 @@
       const filteredData = storedData.filter(row => {
         const stt = (row[0] || '').toString().toLowerCase().trim();
         const sim = (row[1] || '').toString().toLowerCase().trim().replace(/\./g, '');
-        const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
+        const middle4Digits = sim.length >= 8 ? sim.slice(3, 8) : '';
 
         const matchSim = searchSimInput === '' || sim.includes(searchSimInput);
         const matchSTT = searchInput === '' || stt == searchInput;
