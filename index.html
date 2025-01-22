@@ -197,14 +197,36 @@
       z-index: 1000;
     }
 
-    .filter-container input,
-    .filter-container select {
+
+    .filter-container .input-group {
+      position: relative;
+    }
+
+    .filter-container input {
       padding: 8px;
       font-size: 1rem;
       border-radius: 5px;
       border: 1px solid #ccc;
-      flex: 1 1 150px;
+      padding-right: 40px;
     }
+
+    .filter-container button {
+      position: absolute;
+      top: 0;
+      right: 0;
+      height: 100%;
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 0 5px 5px 0;
+      cursor: pointer;
+      padding: 0 10px;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
 
     button {
       padding: 5px 10px;
@@ -247,6 +269,12 @@
         padding: 8px;
       }
 
+      thead#pinnedRows {
+        position: sticky;
+        top: 88px;
+        z-index: 3;
+      }
+
       .filter-container input,
       .filter-container select {
         font-size: 0.9rem;
@@ -273,6 +301,12 @@
         padding: 6px;
       }
 
+      thead#pinnedRows {
+        position: sticky;
+        top: 114px;
+        z-index: 3;
+      }
+
       th {
         background-color: red;
         color: white;
@@ -291,26 +325,51 @@
   <button id="exportExcel" style="margin-top: 20px; padding: 10px; cursor: pointer;">Xuất File Excel</button>
 
   <div class="filter-container">
-    <input type="text" id="searchInput" placeholder="Tìm kiếm STT..." onkeyup="debouncedFilter()" />
-    <!-- <select id="mangFilter" onchange="debouncedFilter()">
-      <option value="">Chọn Mệnh</option>
-      <option value="mộc">Mộc</option>
-      <option value="hỏa">Hỏa</option>
-      <option value="thủy">Thủy</option>
-      <option value="thổ">Thổ</option>
-      <option value="kim">Kim</option>
-    </select> -->
-    <input type="text" id="startFilter" placeholder="Đầu số" onkeyup="debouncedFilter()" />
-    <input type="text" id="middleFilter" placeholder="Tìm kiếm 4 số giữa SIM..." onkeyup="debouncedFilter()" />
-    <input type="text" id="endFilter" placeholder="Cuối số" onkeyup="debouncedFilter()" />
-  </div>
 
+
+    <div class="input-group">
+      <input type="text" id="searchInput" placeholder="Tìm STT..." />
+      <button onclick="filterTable()">Tìm</button>
+    </div>
+    <div class="input-group">
+      <input type="text" id="searchSimInput" placeholder="Tìm SĐT..." />
+      <button onclick="filterTable()">Tìm</button>
+    </div>
+    <div class="input-group">
+      <input type="text" id="startFilter" placeholder="Đầu số" />
+      <button onclick="filterTable()">Tìm</button>
+    </div>
+    <div class="input-group">
+      <input type="text" id="middleFilter" placeholder="4 số giữa" />
+      <button onclick="filterTable()">Tìm</button>
+    </div>
+    <div class="input-group">
+      <input type="text" id="endFilter" placeholder="Cuối số" />
+      <button onclick="filterTable()">Tìm</button>
+    </div>
+  </div>
   <table id="dataTable">
     <thead id="pinnedRows"></thead>
     <thead></thead>
     <tbody></tbody>
   </table>
-
+  <button id="toggleScroll" style="
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 1000;
+  background-color: rgb(33, 164, 230);
+  color: white;
+  border: none;
+  border-radius: 50%;
+  width: 60px;
+  height: 60px;
+  font-size: 1.2rem;
+  box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+  cursor: pointer;
+">
+    ⬇️
+  </button>
 
   <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 
@@ -319,20 +378,26 @@
     let autoScrollActive = false;
     let timeoutId;
     let isFiltering = false;
-    function toggleAutoScroll() {
+    document.getElementById('toggleScroll').addEventListener('click', () => {
       if (autoScrollActive) {
-        clearInterval(autoScrollInterval);
-        autoScrollActive = false;
+        stopAutoScroll();
+        document.getElementById('toggleScroll').textContent = '⬇️';
+        document.getElementById('toggleScroll').style.backgroundColor = rgb(33, 164, 230);
       } else {
         startAutoScroll();
-        autoScrollActive = true;
+        document.getElementById('toggleScroll').textContent = '⏹️';
+        document.getElementById('toggleScroll').style.backgroundColor = rgb(33, 164, 230);
       }
+    });
+    function stopAutoScroll() {
+      clearInterval(autoScrollInterval);
+      autoScrollActive = false;
     }
-
     function startAutoScroll() {
+      if (autoScrollActive) return; // Nếu đang tự động cuộn thì không làm gì
+      autoScrollActive = true;
       const scrollStep = 1;
       const scrollInterval = 50;
-
       autoScrollInterval = setInterval(() => {
         window.scrollBy(0, scrollStep);
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
@@ -340,9 +405,13 @@
         }
       }, scrollInterval);
     }
-    document.addEventListener('keydown', function (event) {
+    document.addEventListener('keydown', (event) => {
       if (event.key === 'ArrowUp') {
-        toggleAutoScroll();
+        if (autoScrollActive) {
+          stopAutoScroll();
+        } else {
+          startAutoScroll();
+        }
       }
     });
 
@@ -359,6 +428,8 @@
 
       XLSX.writeFile(workbook, 'Updated_Data.xlsx');
     });
+
+    let excelData = [];
 
     document.getElementById('excelFile').addEventListener('change', function (event) {
       const file = event.target.files[0];
@@ -377,14 +448,18 @@
 
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        const filteredData = jsonData.slice(1000);
-        localStorage.setItem('excelData', JSON.stringify(filteredData));
+        // Lưu trữ toàn bộ dữ liệu
+        excelData = jsonData.slice(1000); // Chỉ lấy dữ liệu cần thiết, nếu có dữ liệu giới hạn
 
-        displayTable(filteredData);
+        // Lưu vào localStorage
+        localStorage.setItem('excelData', JSON.stringify(excelData));
+
+        displayTable(excelData); // Hiển thị bảng ban đầu
       };
 
       reader.readAsArrayBuffer(file);
     });
+
 
     let currentPage = 0;
     const pageSize = 500;
@@ -392,8 +467,14 @@
       const tableHead = document.querySelector('#dataTable thead');
       const tableBody = document.querySelector('#dataTable tbody');
 
+      // Xóa dữ liệu cũ trước khi hiển thị kết quả mới
+      if (!append) {
+        tableBody.innerHTML = '';
+        currentPage = 0; // Reset trang hiện tại
+      }
+
       if (data.length === 0) {
-        alert("No data found in the file.");
+        alert("Không tìm thấy dữ liệu phù hợp.");
         return;
       }
 
@@ -408,16 +489,15 @@
         tableHead.appendChild(headerRow);
       }
 
-      if (!append) tableBody.innerHTML = '';
-
       const startIndex = currentPage * pageSize;
-      const endIndex = startIndex + pageSize;
-      const pageData = data.slice(startIndex, endIndex);
-      const fragment = document.createDocumentFragment();
+      const endIndex = Math.min(startIndex + pageSize, data.length); // Giới hạn số lượng dữ liệu hiển thị
+      const pageData = data.slice(startIndex, endIndex); // Lấy dữ liệu trong phạm vi
 
+      const fragment = document.createDocumentFragment();
       pageData.forEach((row, index) => {
         const tr = document.createElement('tr');
         tr.dataset.index = startIndex + index;
+
         const pinCell = document.createElement('td');
         const pinButton = document.createElement('button');
         pinButton.textContent = 'Ghim';
@@ -450,7 +530,6 @@
                 label.style.backgroundColor = '#ff0000';
                 label.textContent = 'Hỏa';
                 label.style.color = 'white';
-
                 break;
               case 'thủy':
                 label.style.backgroundColor = '#00b0f0';
@@ -461,7 +540,6 @@
                 label.style.backgroundColor = '#808080';
                 label.textContent = 'Thổ';
                 label.style.color = 'white';
-
                 break;
               case 'kim':
                 label.style.backgroundColor = '#ffc000';
@@ -481,8 +559,6 @@
           tr.appendChild(td);
         });
 
-
-
         const deleteCell = document.createElement('td');
         const deleteButton = document.createElement('button');
         deleteButton.textContent = 'Xóa';
@@ -499,13 +575,11 @@
       });
 
       tableBody.appendChild(fragment);
-    }
-
-    function loadMoreData() {
-      const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
-      if ((currentPage + 1) * pageSize < storedData.length) {
-        currentPage++;
-        displayTable(storedData, true);
+      if (!isFiltering && currentScrollIndex >= 0) {
+        const targetRow = tableBody.querySelector(`tr[data-index="${currentScrollIndex}"]`);
+        if (targetRow) {
+          targetRow.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
       }
     }
 
@@ -534,19 +608,13 @@
           tableBody.appendChild(row);
         }
       } else {
-        // Ghim: đưa hàng lên khu vực ghim
+
         row.classList.add('pinned');
         pinButton.textContent = 'Bỏ Ghim';
         pinButton.style.backgroundColor = '#007bff';
         pinnedContainer.appendChild(row);
       }
     }
-
-
-
-
-
-
     function deleteRow(rowIndex) {
       const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
       const deletedData = JSON.parse(localStorage.getItem('deletedData')) || [];
@@ -563,12 +631,12 @@
     }
 
 
-    window.onscroll = function () {
-      if (window.innerHeight + window.scrollY >= document.body.offsetHeight) {
-        loadMoreData();
-      }
-    };
 
+    const tablePosition = dataTable.getBoundingClientRect().top + window.scrollY;
+    window.scrollTo({
+      top: tablePosition - 100, // Cách 100px từ viền trên
+      behavior: 'smooth'
+    });
 
     window.onscroll = function () {
       if (!isFiltering && window.innerHeight + window.scrollY >= document.body.offsetHeight) {
@@ -577,6 +645,9 @@
     };
 
     function loadMoreData() {
+      if (isFiltering) {
+        return;
+      }
       const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
       const totalData = storedData.length;
       const totalPages = Math.ceil(totalData / pageSize);
@@ -584,60 +655,86 @@
       if (currentPage < totalPages - 1) {
         currentPage++;
         displayTable(storedData, true);
-        filterTable(); // Chạy lại bộ lọc sau khi thêm dữ liệu
       } else {
         console.log("Đã tải hết dữ liệu.");
       }
     }
 
 
-
     function debouncedFilter() {
       clearTimeout(timeoutId);
       timeoutId = setTimeout(filterTable, 200);
     }
+    document.getElementById('searchInput').addEventListener('click', () => {
+      const searchSimInput = document.getElementById('searchSimInput').value.trim();
+      const startFilter = document.getElementById('startFilter').value.trim();
+      const middleFilter = document.getElementById('middleFilter').value.trim();
+      const endFilter = document.getElementById('endFilter').value.trim();
 
-    // function filterTable() {
-    //   const mệnhFilter = document.getElementById('mangFilter').value.toLowerCase();
-    //   const rows = document.querySelectorAll('#dataTable tbody tr');
+      if (!searchSimInput && !startFilter && !middleFilter && !endFilter) {
+        isFiltering = false;
+        currentPage = 0;
+        displayTable(JSON.parse(localStorage.getItem('excelData')).slice(0, pageSize));
+      }
+    });
 
-    //   rows.forEach(row => {
-    //     const cells = row.getElementsByTagName('td');
-    //     const mệnh = cells[3]?.textContent.toLowerCase();
-
-    //     if (mệnhFilter === "" || mệnh.includes(mệnhFilter)) {
-    //       row.style.display = '';
-    //     } else {
-    //       row.style.display = 'none';
-    //     }
-    //   });
-    // }
+    let currentScrollIndex = 0;
     function filterTable() {
-      const searchInput = document.getElementById('searchInput').value.toLowerCase();
-      const startFilter = document.getElementById('startFilter').value.toLowerCase();
-      const endFilter = document.getElementById('endFilter').value.toLowerCase();
-      const middleFilter = document.getElementById('middleFilter').value.toLowerCase();
-      const rows = document.querySelectorAll('#dataTable tbody tr');
+      const searchSimInput = document.getElementById('searchSimInput').value.toLowerCase().trim();
+      const searchInput = document.getElementById('searchInput').value.toLowerCase().trim();
+      const startFilter = document.getElementById('startFilter').value.toLowerCase().trim();
+      const middleFilter = document.getElementById('middleFilter').value.toLowerCase().trim();
+      const endFilter = document.getElementById('endFilter').value.toLowerCase().trim();
 
-      rows.forEach(row => {
-        const cells = row.getElementsByTagName('td');
-        const sim = cells[2]?.textContent.toLowerCase().replace(/\./g, '');
-        const stt = cells[1]?.textContent.toLowerCase();
-        const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
-        const matchSTT = stt.includes(searchInput);
-        const matchStart = startFilter === '' || sim.startsWith(startFilter);
-        const matchEnd = endFilter === '' || sim.endsWith(endFilter);
-        const matchMiddle4Digits = middle4Digits.includes(middleFilter);
+      const tableBody = document.querySelector('#dataTable tbody');
+      const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
 
-        if (matchSTT && matchStart && matchEnd && matchMiddle4Digits) {
-          row.style.display = '';
-        } else {
-          row.style.display = 'none';
+      if (autoScrollActive) {
+        stopAutoScroll();
+      }
+
+      if (!isFiltering) {
+        scrollPosition = window.scrollY;
+      }
+
+      // Nếu không có giá trị tìm kiếm, thoát chế độ tìm kiếm
+      if (!searchSimInput && !searchInput && !startFilter && !middleFilter && !endFilter) {
+        if (isFiltering) {
+          isFiltering = false;
+          currentPage = Math.floor(currentScrollIndex / pageSize);
+          displayTable(storedData.slice(currentPage * pageSize, (currentPage + 1) * pageSize));
+
+          // Quay lại vị trí cuộn ban đầu
+          window.scrollTo(0, scrollPosition);
         }
+        return;
+      }
+
+      // Lọc dữ liệu theo điều kiện tìm kiếm
+      const filteredData = storedData.filter(row => {
+        const stt = (row[0] || '').toString().toLowerCase().trim();
+        const sim = (row[1] || '').toString().toLowerCase().trim().replace(/\./g, '');
+        const middle4Digits = sim.length >= 8 ? sim.slice(3, 7) : '';
+
+        const matchSim = searchSimInput === '' || sim.includes(searchSimInput);
+        const matchSTT = searchInput === '' || stt == searchInput;
+        const matchStart = startFilter === '' || sim.startsWith(startFilter);
+        const matchMiddle = middleFilter === '' || middle4Digits === middleFilter;
+        const matchEnd = endFilter === '' || sim.endsWith(endFilter);
+
+        return matchSim && matchSTT && matchStart && matchMiddle && matchEnd;
       });
+
+      // Đánh dấu trạng thái đang tìm kiếm
+      isFiltering = true;
+
+
+      currentPage = 0;
+      displayTable(filteredData.slice(0, pageSize));
+
+      const dataTable = document.getElementById('dataTable'); // Phần đầu bảng
+      dataTable.scrollIntoView({ behavior: 'smooth', block: 'start' });
     }
-
-
 
     document.addEventListener('DOMContentLoaded', function () {
       const storedData = localStorage.getItem('excelData');
