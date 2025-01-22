@@ -465,7 +465,7 @@
 
         const jsonData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-        excelData = jsonData.slice(1000);
+        excelData = jsonData.slice(1);
 
         localStorage.setItem('excelData', JSON.stringify(excelData));
 
@@ -654,14 +654,10 @@
     function deleteRow(rowIndex) {
       const storedData = JSON.parse(localStorage.getItem('excelData')) || [];
       const deletedData = JSON.parse(localStorage.getItem('deletedData')) || [];
-
       const deletedRow = storedData.splice(rowIndex, 1)[0];
       deletedData.push(deletedRow);
-
       localStorage.setItem('excelData', JSON.stringify(storedData));
       localStorage.setItem('deletedData', JSON.stringify(deletedData));
-
-
       currentPage = 0;
       displayTable(storedData);
     }
@@ -670,7 +666,7 @@
 
     const tablePosition = dataTable.getBoundingClientRect().top + window.scrollY;
     window.scrollTo({
-      top: tablePosition - 100, // Cách 100px từ viền trên
+      top: tablePosition - 100,
       behavior: 'smooth'
     });
 
@@ -762,7 +758,7 @@
         return matchSim && matchSTT && matchStart && matchMiddle && matchEnd;
       });
 
-      // Đánh dấu trạng thái đang tìm kiếm
+
       isFiltering = true;
 
 
