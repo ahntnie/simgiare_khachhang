@@ -13,6 +13,11 @@
       color: #333;
     }
 
+    html {
+      scroll-behavior: smooth;
+      /* Cuộn mượt mà khi chuyển trang */
+    }
+
     h1 {
       text-align: center;
       color: #333;
@@ -21,7 +26,6 @@
     }
 
     input[type="file"] {
-      display: block;
       margin: 0 auto 20px;
       padding: 10px;
       font-size: 1rem;
@@ -37,8 +41,11 @@
     }
 
     table {
+      position: relative;
+      top: -120px;
+
       border-spacing: 15px 0;
-      width: 25%;
+      width: 18%;
       border-collapse: collapse;
       margin: 20px auto;
       box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -50,7 +57,7 @@
     th:nth-child(1),
     td:nth-child(2),
     th:nth-child(2) {
-      width: 30px;
+      width: 20px;
       padding: 2px 3px;
       word-wrap: break-word;
       text-align: center;
@@ -59,7 +66,7 @@
     td:nth-child(3),
     th:nth-child(3) {
       width: 30px;
-      padding: 2px 15px;
+      padding: 3.5px 0px;
       word-wrap: break-word;
       text-align: center;
     }
@@ -72,6 +79,11 @@
       padding: 2px 3px;
       word-wrap: break-word;
       text-align: center;
+    }
+
+    tr.highlighted {
+      background-color: yellow;
+      border: 2px solid white;
     }
 
     td:nth-child(4),
@@ -196,11 +208,11 @@
 
     thead#pinnedRows {
       position: sticky;
-      top: 47px;
+      top: 0px;
       z-index: 3;
     }
 
-    .filter-container {
+    /* .filter-container {
       display: flex;
       flex-wrap: wrap;
       justify-content: center;
@@ -211,8 +223,25 @@
       position: sticky;
       top: 0;
       z-index: 1000;
-    }
+    } */
 
+    .filter-container {
+      position: fixed;
+      top: 20px;
+      right: 20px;
+      width: 250px;
+      z-index: 1000;
+      background-color: #f5f5f5;
+      padding: 15px;
+      /* Thêm padding bên trong */
+      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+      border-radius: 5px;
+      display: flex;
+      flex-direction: column;
+      /* Các phần tử xếp dọc */
+      gap: 15px;
+      /* Khoảng cách giữa các phần tử */
+    }
 
     .filter-container .input-group {
       position: relative;
@@ -285,17 +314,18 @@
         padding: 8px;
       }
 
-      thead#pinnedRows {
+      /* thead#pinnedRows {
         position: sticky;
         top: 88px;
         z-index: 3;
-      }
+      } */
+
 
       .filter-container input,
       .filter-container select {
         font-size: 0.9rem;
         padding: 8px;
-        flex: 1 1 100px;
+        width: 120px;
       }
 
     }
@@ -317,11 +347,11 @@
         padding: 6px;
       }
 
-      thead#pinnedRows {
+      /* thead#pinnedRows {
         position: sticky;
         top: 114px;
         z-index: 3;
-      }
+      } */
 
       th {
         background-color: red;
@@ -336,7 +366,6 @@
 </head>
 
 <body>
-  <h1>CHỌN FILE EXCEL ĐỂ EXPORT SIM</h1>
   <input type="file" id="excelFile" accept=".xlsx, .xls" />
   <button id="exportExcel" style="margin-top: 20px; padding: 10px; cursor: pointer;">Xuất File Excel</button>
   <div id="toast"
@@ -491,7 +520,7 @@
         currentPage = 0;
       }
       if (tableHead.innerHTML === '') {
-        const headers = ['GHIM', 'STT', 'SIM', 'MỆNH', 'GIÁ', 'XÓA'];
+        const headers = ['STT', 'SIM', 'MỆNH', 'GIÁ'];
         const headerRow = document.createElement('tr');
         headers.forEach(header => {
           const th = document.createElement('th');
@@ -502,26 +531,18 @@
       }
 
       const startIndex = currentPage * pageSize;
-      const endIndex = Math.min(startIndex + pageSize, data.length); // Giới hạn số lượng dữ liệu hiển thị
-      const pageData = data.slice(startIndex, endIndex); // Lấy dữ liệu trong phạm vi
-
+      const endIndex = Math.min(startIndex + pageSize, data.length);
+      const pageData = data.slice(startIndex, endIndex);
       const fragment = document.createDocumentFragment();
       pageData.forEach((row, index) => {
         const tr = document.createElement('tr');
         tr.dataset.index = startIndex + index;
-
+        tr.addEventListener('click', function () {
+          highlightRow(this);
+        });
+        tr.dataset.originalIndex = startIndex + index;
         const pinCell = document.createElement('td');
-        const pinButton = document.createElement('button');
-        pinButton.textContent = 'Ghim';
-        pinButton.style.backgroundColor = '#4CAF50';
-        pinButton.style.color = 'white';
-        pinButton.style.border = 'none';
-        pinButton.style.borderRadius = '5px';
-        pinButton.style.cursor = 'pointer';
-        pinButton.addEventListener('click', () => togglePin(tr));
-        pinCell.appendChild(pinButton);
-        tr.appendChild(pinCell);
-
+        tr.ondblclick = () => togglePin(tr);
         row.slice(0, 4).forEach((cell, colIndex) => {
           const td = document.createElement('td');
 
@@ -581,17 +602,6 @@
           tr.appendChild(td);
         });
 
-        const deleteCell = document.createElement('td');
-        const deleteButton = document.createElement('button');
-        deleteButton.textContent = 'Xóa';
-        deleteButton.style.backgroundColor = 'red';
-        deleteButton.style.color = 'white';
-        deleteButton.style.border = 'none';
-        deleteButton.style.borderRadius = '5px';
-        deleteButton.style.cursor = 'pointer';
-        deleteButton.addEventListener('click', () => deleteRow(startIndex + index));
-        deleteCell.appendChild(deleteButton);
-        tr.appendChild(deleteCell);
 
         fragment.appendChild(tr);
       });
@@ -604,6 +614,36 @@
         }
       }
     }
+    function highlightRow(row) {
+      if (row.classList.contains('highlighted')) {
+        row.classList.remove('highlighted');
+      } else {
+        let rows = document.querySelectorAll('table tbody tr');
+        rows.forEach(r => r.classList.remove('highlighted'));
+        row.classList.add('highlighted');
+      }
+    }
+
+    document.addEventListener('keydown', function (event) {
+      if (event.key === 'Delete') {
+        const highlightedRows = document.querySelectorAll('#dataTable tbody tr.highlighted');
+        let storedData = JSON.parse(localStorage.getItem('excelData')) || [];
+        const deletedData = JSON.parse(localStorage.getItem('deletedData')) || [];
+
+        highlightedRows.forEach(row => {
+          const rowIndex = parseInt(row.dataset.index, 10);
+          const deletedRow = storedData.splice(rowIndex, 1)[0];
+          deletedData.push(deletedRow);
+          row.remove();
+        });
+
+        localStorage.setItem('excelData', JSON.stringify(storedData));
+        localStorage.setItem('deletedData', JSON.stringify(deletedData));
+
+        displayTable(storedData);
+      }
+    });
+
     function showToast(message) {
       const toast = document.getElementById('toast');
       toast.textContent = message;
@@ -620,15 +660,13 @@
         }, 500);
       }, 3000);
     }
+
     function togglePin(row) {
-      const pinButton = row.querySelector('td button');
       const pinnedContainer = document.querySelector('#pinnedRows');
       const tableBody = document.querySelector('#dataTable tbody');
 
       if (row.classList.contains('pinned')) {
         row.classList.remove('pinned');
-        pinButton.textContent = 'Ghim';
-        pinButton.style.backgroundColor = '#4CAF50';
 
         const originalIndex = parseInt(row.getAttribute('data-index'), 10);
         const rows = Array.from(tableBody.querySelectorAll('tr'));
@@ -646,8 +684,7 @@
       } else {
 
         row.classList.add('pinned');
-        pinButton.textContent = 'Bỏ Ghim';
-        pinButton.style.backgroundColor = '#007bff';
+
         pinnedContainer.appendChild(row);
       }
     }
