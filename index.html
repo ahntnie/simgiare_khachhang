@@ -229,7 +229,7 @@
       position: fixed;
       top: 20px;
       right: 20px;
-      width: 250px;
+      width: 180px;
       z-index: 1000;
       background-color: #f5f5f5;
       padding: 15px;
@@ -250,9 +250,9 @@
     .filter-container input {
       padding: 8px;
       font-size: 1rem;
+      width: 163px;
       border-radius: 5px;
       border: 1px solid #ccc;
-      padding-right: 40px;
     }
 
     .filter-container button {
@@ -292,7 +292,39 @@
       color: white;
     }
 
+    .button-container {
+      position: fixed;
 
+      top: 20px;
+
+      left: 20px;
+
+      display: flex;
+      flex-direction: column;
+
+      align-items: flex-start;
+      gap: 5px;
+    }
+
+    .button-container input[type="file"],
+    .button-container button {
+      width: 120px;
+      padding: 5px 10px;
+      font-size: 0.8rem;
+      cursor: pointer;
+    }
+
+    .button-container button {
+      background-color: #4CAF50;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      transition: all 0.3s ease;
+    }
+
+    .button-container button:hover {
+      background-color: #45a049;
+    }
 
     @media (max-width: 768px) {
       body {
@@ -314,11 +346,7 @@
         padding: 8px;
       }
 
-      /* thead#pinnedRows {
-        position: sticky;
-        top: 88px;
-        z-index: 3;
-      } */
+
 
 
       .filter-container input,
@@ -366,8 +394,10 @@
 </head>
 
 <body>
-  <input type="file" id="excelFile" accept=".xlsx, .xls" />
-  <button id="exportExcel" style="margin-top: 20px; padding: 10px; cursor: pointer;">Xuất File Excel</button>
+  <div class="button-container">
+    <input type="file" id="excelFile" accept=".xlsx, .xls" />
+    <button id="exportExcel" style="margin-top: 10px;">Xuất File Excel</button>
+  </div>
   <div id="toast"
     style="display: none; position: fixed; bottom: 20px; left: 20px; background-color: #333; color: white; padding: 10px 20px; border-radius: 5px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); z-index: 1000;">
     Không tìm thấy dữ liệu phù hợp.
