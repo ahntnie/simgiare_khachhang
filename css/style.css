@@ -1,5 +1,5 @@
 body {
-  font-family: "Arial", sans-serif;
+  font-family: "Roboto", sans-serif;
   margin: 20px;
   background-color: #f5f5f5;
   color: #333;
@@ -35,7 +35,7 @@ table {
   position: relative;
   top: -20px;
   border-spacing: 15px 0;
-  width: 14%;
+  width: 16%;
   border-collapse: collapse;
   margin: 20px auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -204,7 +204,7 @@ thead#pinnedRows {
   position: sticky;
   top: 0px;
   z-index: 3;
-  font-size: 12px;
+  font-size: 9px;
 }
 
 /* .filter-container {
