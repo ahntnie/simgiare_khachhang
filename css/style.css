@@ -46,7 +46,7 @@ table {
 td:nth-child(2),
 th:nth-child(2) {
   width: 20px;
-  padding: 2px 3px;
+  padding: 2px 7px;
   word-wrap: break-word;
   text-align: center;
 }
