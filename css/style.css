@@ -89,7 +89,7 @@ tr.highlighted {
 td:nth-child(4),
 th:nth-child(4) {
   width: 18px;
-  padding: 2px 0px;
+  padding: 2px 3px;
   word-wrap: break-word;
   text-align: center;
 }
