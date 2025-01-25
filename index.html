@@ -89,7 +89,7 @@
       if (autoScrollActive) return;
       autoScrollActive = true;
       const scrollStep = 1;
-      const scrollInterval = 70;
+      const scrollInterval = 100;
       autoScrollInterval = setInterval(() => {
         window.scrollBy(0, scrollStep);
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
