@@ -197,16 +197,16 @@
           if (colIndex === 2) {
             const normalizedValue = (cell || '').trim().toLowerCase();
             const label = document.createElement('span');
-            label.style.padding = '5px 10px';
-            label.style.borderRadius = '30px';
+            label.style.padding = '5px 8px';
+            label.style.borderRadius = '25px';
             label.style.display = 'inline-block';
 
             switch (normalizedValue) {
               case 'mộc':
                 label.style.backgroundColor = '#00b050';
                 label.textContent = 'Mộc';
-                label.style.color = 'white'; label.style.fontSize = '12px';
-                label.style.padding = '3px 5px';
+                label.style.color = 'white'; label.style.fontSize = '11px';
+                label.style.padding = '3px 3px';
 
                 break;
               case 'hỏa':
@@ -214,27 +214,27 @@
                 label.textContent = 'Hỏa';
                 label.style.color = 'white';
                 label.style.fontSize = '12px';
-                label.style.padding = '3px 5px';
+                label.style.padding = '3px 3px';
                 break;
               case 'thủy':
                 label.style.backgroundColor = '#00b0f0';
                 label.textContent = 'Thủy';
-                label.style.color = 'white'; label.style.fontSize = '12px';
+                label.style.color = 'white'; label.style.fontSize = '11px';
                 label.style.padding = '3px 3px';
 
                 break;
               case 'thổ':
-                label.style.backgroundColor = '#808080';
+                label.style.backgroundColor = '#A52A2A';
                 label.textContent = 'Thổ';
-                label.style.color = 'white'; label.style.fontSize = '12px';
-                label.style.padding = '3px 5px';
+                label.style.color = 'white'; label.style.fontSize = '11px';
+                label.style.padding = '3px 4px';
 
                 break;
               case 'kim':
                 label.style.backgroundColor = '#ffc000';
                 label.textContent = 'Kim';
-                label.style.color = 'white'; label.style.fontSize = '12px';
-                label.style.padding = '3px 5px';
+                label.style.color = 'white'; label.style.fontSize = '11px';
+                label.style.padding = '3px 4px';
 
                 break;
             }
@@ -256,7 +256,7 @@
         mangTd.style.fontWeight = 'bold';
 
         mangTd.style.color = 'red';
-        mangTd.style.padding = '2px 6px';
+        mangTd.style.padding = '2px 8px';
         tr.appendChild(mangTd);
         fragment.appendChild(tr);
       });
