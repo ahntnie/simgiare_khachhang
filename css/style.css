@@ -104,7 +104,7 @@ th:nth-child(4) {
 }
 
 td {
-  border: 1px solid red;
+  border: 1px solid rgb(255, 196, 196);
   /* padding: 5px; */
   text-align: center;
   font-size: 1rem;
@@ -362,7 +362,6 @@ button[style*="background-color: #FFA500"] {
     min-width: 16%;
   }
 
-  th,
   td {
     font-size: 0.9rem;
   }
