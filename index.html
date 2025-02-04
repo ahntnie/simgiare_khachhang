@@ -14,7 +14,7 @@
 <body>
   <div class="button-container">
     <input type="file" id="excelFile" accept=".xlsx, .xls" />
-    <button id="exportExcel" style="margin-top: 12px;">Xuất File Excel</button>
+    <button id="exportExcel" style="margin-top: 10px;">Xuất File Excel</button>
   </div>
   <div id="toast"
     style="display: none; position: fixed; bottom: 20px; left: 20px; background-color: #333; color: white; padding: 10px 20px; border-radius: 5px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); z-index: 1000;">
@@ -90,8 +90,8 @@
     function startAutoScroll() {
       if (autoScrollActive) return;
       autoScrollActive = true;
-      const scrollStep = 0;
-      const scrollInterval = 50;
+      const scrollStep = 1;
+      const scrollInterval = 80;
       autoScrollInterval = setInterval(() => {
         window.scrollBy(0, scrollStep);
         if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight) {
