@@ -52,13 +52,6 @@ table {
   text-align: center;
 }
 
-td:nth-child(2),
-th:nth-child(2) {
-  width: 20%;
-  padding: 2px 8px;
-  word-wrap: break-word;
-  text-align: center;
-}
 td:nth-child(1),
 th:nth-child(1) {
   width: 20%;
@@ -66,14 +59,21 @@ th:nth-child(1) {
   word-wrap: break-word;
   text-align: center;
 }
+td:nth-child(2),
+th:nth-child(2) {
+  width: 20%;
+  padding: 2px 8px;
+  word-wrap: break-word;
+  text-align: center;
+}
 
-td:nth-child(4),
-td:nth-child(4) {
+td:nth-child(3),
+td:nth-child(3) {
   font-size: 12px;
   font-weight: bold;
 }
-td:nth-child(3),
-th:nth-child(3) {
+td:nth-child(4),
+th:nth-child(4) {
   width: 20%;
   padding: 2px 8px;
   word-wrap: break-word;
