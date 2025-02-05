@@ -44,7 +44,7 @@ table {
   position: relative;
   top: -20px;
   border-spacing: 15px 0;
-  width: 16%;
+  width: 100%;
   border-collapse: collapse;
   margin: 20px auto;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
@@ -67,7 +67,7 @@ th:nth-child(1) {
   text-align: center;
 }
 
-td:nth-child(1),
+td:nth-child(4),
 td:nth-child(4) {
   font-size: 12px;
   font-weight: bold;
