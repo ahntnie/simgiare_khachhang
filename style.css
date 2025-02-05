@@ -75,7 +75,7 @@ td:nth-child(4) {
 td:nth-child(3),
 th:nth-child(3) {
   width: 15%;
-  padding: 3.5px 0px;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
