@@ -14,7 +14,7 @@
 <body>
   <div class="button-container">
     <input type="file" id="excelFile" accept=".xlsx, .xls" />
-    <button id="exportExcel" style="margin-top: 12px;">Xuất File Excel</button>
+    <button id="exportExcel" style="margin-top: 10px;">Xuất File Excel</button>
   </div>
   <div id="toast"
     style="display: none; position: fixed; bottom: 20px; left: 20px; background-color: #333; color: white; padding: 10px 20px; border-radius: 5px; box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.2); z-index: 1000;">
@@ -205,41 +205,36 @@
               case 'mộc':
                 label.style.backgroundColor = '#00b050';
                 label.textContent = 'Mộc';
-                font-weight: bold;
                 label.style.color = 'white'; label.style.fontSize = '12px';
-                label.style.padding = '1px 5px';
+                label.style.padding = '3px 5px';
 
                 break;
               case 'hỏa':
                 label.style.backgroundColor = '#ff0000';
                 label.textContent = 'Hỏa';
-                font-weight: bold;
                 label.style.color = 'white';
-                label.style.fontSize = '10px';
-                label.style.padding = '1px 5px';
+                label.style.fontSize = '12px';
+                label.style.padding = '3px 5px';
                 break;
               case 'thủy':
                 label.style.backgroundColor = '#00b0f0';
                 label.textContent = 'Thủy';
-                font-weight: bold;
                 label.style.color = 'white'; label.style.fontSize = '12px';
-                label.style.padding = '1px 4px';
+                label.style.padding = '3px 3px';
 
                 break;
               case 'thổ':
                 label.style.backgroundColor = '#808080';
                 label.textContent = 'Thổ';
-                font-weight: bold;
                 label.style.color = 'white'; label.style.fontSize = '12px';
-                label.style.padding = '1px 5px';
+                label.style.padding = '3px 5px';
 
                 break;
               case 'kim':
                 label.style.backgroundColor = '#ffc000';
                 label.textContent = 'Kim';
-                font-weight: bold;
                 label.style.color = 'white'; label.style.fontSize = '12px';
-                label.style.padding = '1px 5px';
+                label.style.padding = '3px 5px';
 
                 break;
             }
@@ -261,7 +256,7 @@
         mangTd.style.fontWeight = 'bold';
 
         mangTd.style.color = 'red';
-        mangTd.style.padding = '2px 8px';
+        mangTd.style.padding = '2px 6px';
         tr.appendChild(mangTd);
         fragment.appendChild(tr);
       });
