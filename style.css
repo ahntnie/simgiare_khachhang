@@ -62,7 +62,7 @@ th:nth-child(2) {
 td:nth-child(1),
 th:nth-child(1) {
   width: 10%;
-  padding: 2px 5px;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
@@ -75,7 +75,7 @@ td:nth-child(4) {
 td:nth-child(3),
 th:nth-child(3) {
   width: 15%;
-  padding: 3.5px 0px;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
@@ -98,7 +98,7 @@ tr.highlighted {
 td:nth-child(4),
 th:nth-child(4) {
   width: 18%;
-  padding: 2px 13px;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
