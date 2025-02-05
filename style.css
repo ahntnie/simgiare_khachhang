@@ -3,12 +3,21 @@ body {
   margin: 20px;
   background-color: #f5f5f5;
   color: #333;
+  overflow: scroll;
 }
-
+body::-webkit-scrollbar {
+  display: none;
+}
 html {
   scroll-behavior: smooth;
 }
+.scroll-container {
+  overflow-y: scroll; /* Cho phép cuộn dọc */
+}
 
+.scroll-container::-webkit-scrollbar {
+  width: 0px; /* Ẩn thanh cuộn dọc */
+}
 h1 {
   text-align: center;
   color: #333;
@@ -45,15 +54,15 @@ table {
 
 td:nth-child(2),
 th:nth-child(2) {
-  width: 20px;
-  padding: 2px 7px;
+  width: 20%;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
 td:nth-child(1),
 th:nth-child(1) {
-  width: 10%;
-  padding: 2px 0px;
+  width: 20%;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
@@ -65,8 +74,8 @@ td:nth-child(4) {
 }
 td:nth-child(3),
 th:nth-child(3) {
-  width: 18%;
-  padding: 3.5px 0px;
+  width: 20%;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
@@ -88,14 +97,14 @@ tr.highlighted {
 
 td:nth-child(4),
 th:nth-child(4) {
-  width: 18px;
-  padding: 2px 6px;
+  width: 20%;
+  padding: 2px 8px;
   word-wrap: break-word;
   text-align: center;
 }
 
 td {
-  border: 1px solid red;
+  border: 1px solid rgb(255, 196, 196);
   /* padding: 5px; */
   text-align: center;
   font-size: 1rem;
@@ -347,7 +356,56 @@ button[style*="background-color: #FFA500"] {
     width: 120px;
   }
 }
+@media (max-width: 1000px) {
+  table {
+    width: 16%;
+    min-width: 16%;
+  }
 
+  td {
+    font-size: 0.9rem;
+  }
+  td:nth-child(1),
+  th:nth-child(1) {
+    width: 10%;
+    padding: 2px 5px;
+    font-size: 12px;
+    font-weight: bold;
+    word-wrap: break-word;
+    text-align: center;
+  }
+
+  td:nth-child(2),
+  th:nth-child(2) {
+    width: 20%;
+    padding: 2px 8px;
+    word-wrap: break-word;
+    text-align: center;
+  }
+
+  td:nth-child(3),
+  th:nth-child(3) {
+    width: 15%;
+    padding: 3.5px 5px;
+    word-wrap: break-word;
+    text-align: center;
+  }
+
+  td:nth-child(4),
+  th:nth-child(4) {
+    width: 18%;
+    padding: 2px 13px;
+    word-wrap: break-word;
+    text-align: center;
+    font-size: 12px;
+    font-weight: bold;
+  }
+
+  th {
+    background-color: red;
+    color: white;
+  }
+}
 @media (max-width: 480px) {
   h1 {
     font-size: 1.2rem;
