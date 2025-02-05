@@ -6,6 +6,7 @@ body {
   overflow: scroll;
 }
 body::-webkit-scrollbar {
+  display: none;
 }
 html {
   scroll-behavior: smooth;
@@ -61,18 +62,20 @@ th:nth-child(2) {
 td:nth-child(1),
 th:nth-child(1) {
   width: 10%;
-  padding: 2px 8px;
+  padding: 2px 5px;
   word-wrap: break-word;
   text-align: center;
 }
 
-td:nth-child(1), td:nth-child(1) {
-  font-size: 10px;
+td:nth-child(1),
+td:nth-child(4) {
+  font-size: 12px;
+  font-weight: bold;
 }
 td:nth-child(3),
 th:nth-child(3) {
-  width: 10%;
-  padding: 2px 8px;
+  width: 15%;
+  padding: 3.5px 0px;
   word-wrap: break-word;
   text-align: center;
 }
@@ -94,17 +97,17 @@ tr.highlighted {
 
 td:nth-child(4),
 th:nth-child(4) {
-  width: 10%;
-  padding: 2px 8px;
+  width: 18%;
+  padding: 2px 13px;
   word-wrap: break-word;
   text-align: center;
 }
 
 td {
   border: 1px solid rgb(255, 196, 196);
-  padding: 5px;
+  /* padding: 5px; */
   text-align: center;
-  /* font-size: 20px; */
+  font-size: 1rem;
   transition: background-color 0.3s ease;
 }
 
@@ -171,7 +174,6 @@ td {
 }
 
 .gia {
-  font-size: 13px;
   color: #ff0000;
   font-weight: bold;
 }
@@ -211,7 +213,7 @@ thead#pinnedRows {
   position: sticky;
   top: 0px;
   z-index: 3;
-  font-size: 10px;
+  font-size: 9px;
 }
 
 /* .filter-container {
