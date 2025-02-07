@@ -197,44 +197,48 @@
           if (colIndex === 2) {
             const normalizedValue = (cell || '').trim().toLowerCase();
             const label = document.createElement('span');
-            label.style.padding = '5px 8px';
-            label.style.borderRadius = '25px';
+            label.style.padding = '5px 10px';
+            label.style.borderRadius = '30px';
             label.style.display = 'inline-block';
 
             switch (normalizedValue) {
               case 'mộc':
                 label.style.backgroundColor = '#00b050';
                 label.textContent = 'Mộc';
-                label.style.color = 'white'; label.style.fontSize = '11px';
-                label.style.padding = '3px 3px';
+                label.style.color = 'white'; 
+                label.style.fontSize = '10px';
+                label.style.padding = '1px 5px';
 
                 break;
               case 'hỏa':
                 label.style.backgroundColor = '#ff0000';
                 label.textContent = 'Hỏa';
                 label.style.color = 'white';
-                label.style.fontSize = '12px';
-                label.style.padding = '3px 3px';
+                label.style.fontSize = '10px';
+                label.style.padding = '1px 5px';
                 break;
               case 'thủy':
                 label.style.backgroundColor = '#00b0f0';
                 label.textContent = 'Thủy';
-                label.style.color = 'white'; label.style.fontSize = '11px';
-                label.style.padding = '3px 3px';
+                label.style.color = 'white'; 
+                label.style.fontSize = '10px';
+                label.style.padding = '1px 3.5px';
 
                 break;
               case 'thổ':
-                label.style.backgroundColor = '#CC9900';
+                label.style.backgroundColor = '#808080';
                 label.textContent = 'Thổ';
-                label.style.color = 'white'; label.style.fontSize = '11px';
-                label.style.padding = '3px 4px';
+                label.style.color = 'white'; 
+                label.style.fontSize = '10px';
+                label.style.padding = '1px 5px';
 
                 break;
               case 'kim':
-                label.style.backgroundColor = 'grey';
+                label.style.backgroundColor = '#ffc000';
                 label.textContent = 'Kim';
-                label.style.color = 'white'; label.style.fontSize = '11px';
-                label.style.padding = '3px 4px';
+                label.style.color = 'white'; 
+                label.style.fontSize = '10px';
+                label.style.padding = '1px 5px';
 
                 break;
             }
